@@ -216,13 +216,21 @@ class TaskItem extends StatelessWidget {
               ],
             ),
           ),
+          Icon(Icons.flag, color: task.priorityType.color),
         ],
       ),
     );
   }
 }
 
-enum PriorityType { low, medium, high }
+enum PriorityType {
+  low(Colors.green),
+  medium(Colors.yellow),
+  high(Colors.red);
+
+  final Color color;
+  const PriorityType(this.color);
+}
 
 class Task {
   final int id = DateTime.now().millisecondsSinceEpoch;
