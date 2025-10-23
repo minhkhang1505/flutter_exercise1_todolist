@@ -42,6 +42,7 @@ class _MainScreenState extends State<MainScreen> {
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
@@ -49,7 +50,9 @@ class _MainScreenState extends State<MainScreen> {
         },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Theme.of(context).colorScheme.primary,
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: Theme.of(
+          context,
+        ).colorScheme.primary.withAlpha(150),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.task_alt), label: 'Tasks'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
