@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_exercise1_todolist/core/enums/priority_type.dart';
+import 'package:flutter_exercise1_todolist/presentation/screens/addtask/models/add_task_form_data.dart';
+import 'package:flutter_exercise1_todolist/presentation/screens/addtask/utils/date_time_formatter.dart';
+import 'package:flutter_exercise1_todolist/presentation/screens/addtask/utils/priority_formatter.dart';
+import 'package:flutter_exercise1_todolist/presentation/screens/addtask/widgets/priority_picker_dialog.dart';
+import 'package:flutter_exercise1_todolist/presentation/screens/addtask/widgets/task_action_button.dart';
+import 'package:flutter_exercise1_todolist/presentation/screens/addtask/widgets/task_input_field.dart';
+import 'package:flutter_exercise1_todolist/presentation/screens/addtask/widgets/task_submit_button.dart';
 
 class AddNewTaskScreen extends StatefulWidget {
   const AddNewTaskScreen({super.key});
@@ -9,60 +15,32 @@ class AddNewTaskScreen extends StatefulWidget {
 }
 
 class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
-  DateTime? selectedDate;
-  TimeOfDay? selectedTime;
-  String? selectedPriority;
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _formData = AddTaskFormData();
 
-  void showPriorityDialog(BuildContext context) async {
-    final select = await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const Text(
-                "Choose Priority",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              ...PriorityType.values.map(
-                (priority) => ListTile(
-                  title: Text(
-                    priority.name.replaceFirst(
-                      priority.name[0],
-                      priority.name[0].toUpperCase(),
-                    ),
-                  ),
-                  trailing: Icon(Icons.bookmark, color: priority.color),
-                  onTap: () {
-                    Navigator.of(context).pop(priority.name);
-                  },
-                ),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("Cancel"),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
 
-    if (select != null) {
+  /// Show priority picker dialog
+  Future<void> _showPriorityDialog() async {
+    final selected = await PriorityPickerDialog.show(context);
+    if (selected != null) {
       setState(() {
-        selectedPriority = select;
+        _formData.priority = selected;
       });
     }
   }
 
-  Future<void> _selectDate(BuildContext context) async {
+  /// Show date picker dialog
+  Future<void> _selectDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate,
+      initialDate: _formData.dueDate ?? DateTime.now(),
       firstDate: DateTime.now(),
       lastDate: DateTime(DateTime.now().year + 2),
       helpText: 'Select Due Date',
@@ -70,115 +48,58 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
       cancelText: 'CANCEL',
     );
 
-    if (picked != null && picked != selectedDate) {
-      setState(() => selectedDate = picked);
+    if (picked != null) {
+      setState(() {
+        _formData.dueDate = picked;
+      });
     }
   }
 
-  Future<void> _selectTime(BuildContext context) async {
+  /// Show time picker dialog
+  Future<void> _selectTime() async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: _formData.dueTime ?? TimeOfDay.now(),
       helpText: 'Select Due Time',
       confirmText: 'SELECT',
       cancelText: 'CANCEL',
     );
 
-    if (picked != null && picked != selectedTime) {
-      setState(() => selectedTime = picked);
+    if (picked != null) {
+      setState(() {
+        _formData.dueTime = picked;
+      });
     }
   }
 
-  Widget _formatPriority(String? priority) {
-    if (priority == null) {
-      return Row(
-        children: [
-          Icon(Icons.bookmark, color: Color(0xff006874)),
-          SizedBox(width: 4),
-          Text('Priority'),
-        ],
-      );
-    }
-    if (priority == PriorityType.high.name) {
-      return Row(
-        children: [
-          Icon(Icons.bookmark, color: PriorityType.high.color),
-          SizedBox(width: 4),
-          Text('High'),
-        ],
-      );
-    } else if (priority == PriorityType.medium.name) {
-      return Row(
-        children: [
-          Icon(Icons.bookmark, color: PriorityType.medium.color),
-          SizedBox(width: 4),
-          Text('Medium'),
-        ],
-      );
-    } else {
-      return Row(
-        children: [
-          Icon(Icons.bookmark, color: PriorityType.low.color),
-          SizedBox(width: 4),
-          Text('Low'),
-        ],
-      );
-    }
-  }
+  /// Handle form submission
+  void _handleSubmit() {
+    _formData.title = _titleController.text;
+    _formData.description = _descriptionController.text;
 
-  String _formatDate(DateTime? date) {
-    if (date == null) {
-      return 'Date';
+    if (!_formData.isValid()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a task title')),
+      );
+      return;
     }
 
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final tomorrow = today.add(const Duration(days: 1));
-    final selectedDay = DateTime(date.year, date.month, date.day);
-    final months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    if (selectedDay == today) {
-      return 'Today';
-    } else if (selectedDay == tomorrow) {
-      return 'Tomorrow';
-    } else if (selectedDay.year > now.year) {
-      return '${months[date.month - 1]} ${date.day}, ${date.year}';
-    } else {
-      return '${months[date.month - 1]} ${date.day}';
-    }
-  }
-
-  String _formatTime(TimeOfDay? time) {
-    if (time == null) {
-      return 'Time';
-    }
-    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
-    final period = time.period == DayPeriod.am ? 'AM' : 'PM';
-    return '$hour:${time.minute.toString().padLeft(2, '0')} $period';
+    // TODO: Save the task using a repository or provider
+    // For now, just close the bottom sheet
+    Navigator.of(context).pop(_formData);
   }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.fromLTRB(16, 16, 0, 16),
+        padding: const EdgeInsets.fromLTRB(16, 16, 0, 16),
         decoration: BoxDecoration(
           color: colorScheme.surfaceBright,
           borderRadius: BorderRadius.circular(30.0),
@@ -186,144 +107,90 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: "e.g., Research Artificial Intelligence",
-                  hintStyle: TextStyle(
-                    color: Colors.grey.withAlpha(250),
-                    fontSize: 20,
-                  ),
-                  border: InputBorder.none,
-                ),
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                style: const TextStyle(fontSize: 20),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: "Description",
-                  hintStyle: TextStyle(
-                    color: Colors.grey.withAlpha(250),
-                    fontSize: 16,
-                  ),
-                  border: InputBorder.none,
-                ),
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                style: const TextStyle(fontSize: 16),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(right: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  //date picker
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(10),
-                      backgroundColor: colorScheme.surface,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
-                          color: colorScheme.primary.withAlpha(100),
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    onPressed: () {
-                      _selectDate(context);
-                    },
-                    child: Row(
-                      children: [
-                        const Icon(Icons.calendar_month),
-                        const SizedBox(width: 8),
-                        Text(_formatDate(selectedDate)),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(10),
-                      backgroundColor: colorScheme.surface,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(
-                          color: colorScheme.primary.withAlpha(100),
-                          width: 1,
-                        ),
-                      ),
-                    ),
-                    onPressed: () {
-                      _selectTime(context);
-                    },
-                    child: Row(
-                      children: [
-                        Icon(Icons.alarm),
-                        SizedBox(width: 8),
-                        Text(_formatTime(selectedTime)),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: 8),
-
-                  // priority picker
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(10),
-                      backgroundColor: colorScheme.surface,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-
-                        side: BorderSide(
-                          color: colorScheme.primary.withAlpha(100),
-                          width: 1,
-                        ),
-                      ),
-                    ),
-
-                    onPressed: () {
-                      showPriorityDialog(context);
-                    },
-                    child: _formatPriority(selectedPriority),
-                  ),
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: colorScheme.primary,
-                    shape: CircleBorder(
-                      side: BorderSide(
-                        color: colorScheme.primary.withAlpha(100),
-                        width: 1,
-                      ),
-                    ),
-                  ),
-                  label: Icon(
-                    Icons.arrow_upward,
-                    size: 24,
-                    color: colorScheme.onPrimary,
-                  ),
-                ),
-              ],
-            ),
+            _buildInputFields(),
+            _buildActionButtons(colorScheme),
+            _buildSubmitButton(colorScheme),
           ],
         ),
       ),
+    );
+  }
+
+  /// Build title and description input fields
+  Widget _buildInputFields() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(right: 16.0),
+          child: TaskInputField(
+            hintText: "e.g., Research Artificial Intelligence",
+            fontSize: 20,
+            controller: _titleController,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: TaskInputField(
+            hintText: "Description",
+            fontSize: 16,
+            controller: _descriptionController,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Build date, time, and priority action buttons
+  Widget _buildActionButtons(ColorScheme colorScheme) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          TaskActionButton(
+            colorScheme: colorScheme,
+            onPressed: _selectDate,
+            child: Row(
+              children: [
+                const Icon(Icons.calendar_month),
+                const SizedBox(width: 8),
+                Text(DateTimeFormatter.formatDate(_formData.dueDate)),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          TaskActionButton(
+            colorScheme: colorScheme,
+            onPressed: _selectTime,
+            child: Row(
+              children: [
+                const Icon(Icons.alarm),
+                const SizedBox(width: 8),
+                Text(DateTimeFormatter.formatTime(_formData.dueTime)),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          TaskActionButton(
+            colorScheme: colorScheme,
+            onPressed: _showPriorityDialog,
+            child: PriorityFormatter.formatPriorityWidget(
+              _formData.priority,
+              colorScheme.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Build submit button
+  Widget _buildSubmitButton(ColorScheme colorScheme) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        TaskSubmitButton(colorScheme: colorScheme, onPressed: _handleSubmit),
+      ],
     );
   }
 }
