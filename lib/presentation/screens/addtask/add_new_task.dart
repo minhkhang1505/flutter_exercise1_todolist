@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_exercise1_todolist/core/enums/priority_type.dart';
 
 class AddNewTaskScreen extends StatefulWidget {
   const AddNewTaskScreen({super.key});
@@ -10,6 +11,53 @@ class AddNewTaskScreen extends StatefulWidget {
 class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
+  String? selectedPriority;
+
+  void showPriorityDialog(BuildContext context) async {
+    final select = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const Text(
+                "Choose Priority",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              ...PriorityType.values.map(
+                (priority) => ListTile(
+                  title: Text(
+                    priority.name.replaceFirst(
+                      priority.name[0],
+                      priority.name[0].toUpperCase(),
+                    ),
+                  ),
+                  trailing: Icon(Icons.bookmark, color: priority.color),
+                  onTap: () {
+                    Navigator.of(context).pop(priority.name);
+                  },
+                ),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel"),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (select != null) {
+      setState(() {
+        selectedPriority = select;
+      });
+    }
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -38,6 +86,43 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
 
     if (picked != null && picked != selectedTime) {
       setState(() => selectedTime = picked);
+    }
+  }
+
+  Widget _formatPriority(String? priority) {
+    if (priority == null) {
+      return Row(
+        children: [
+          Icon(Icons.bookmark, color: Color(0xff006874)),
+          SizedBox(width: 4),
+          Text('Priority'),
+        ],
+      );
+    }
+    if (priority == PriorityType.high.name) {
+      return Row(
+        children: [
+          Icon(Icons.bookmark, color: PriorityType.high.color),
+          SizedBox(width: 4),
+          Text('High'),
+        ],
+      );
+    } else if (priority == PriorityType.medium.name) {
+      return Row(
+        children: [
+          Icon(Icons.bookmark, color: PriorityType.medium.color),
+          SizedBox(width: 4),
+          Text('Medium'),
+        ],
+      );
+    } else {
+      return Row(
+        children: [
+          Icon(Icons.bookmark, color: PriorityType.low.color),
+          SizedBox(width: 4),
+          Text('Low'),
+        ],
+      );
     }
   }
 
@@ -189,6 +274,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
                     ),
                   ),
                   SizedBox(width: 8),
+
                   // priority picker
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -206,15 +292,9 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
                     ),
 
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      showPriorityDialog(context);
                     },
-                    child: Row(
-                      children: const [
-                        Icon(Icons.bookmark),
-                        SizedBox(width: 8),
-                        Text('Priority'),
-                      ],
-                    ),
+                    child: _formatPriority(selectedPriority),
                   ),
                 ],
               ),
