@@ -49,10 +49,7 @@ class TaskItem extends StatelessWidget {
       children: [
         _buildTitle(colorScheme),
         _buildDescription(colorScheme),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [const SizedBox(height: 12), _buildDueDate()],
-        ),
+        _buildDueDate(),
       ],
     );
   }
@@ -87,25 +84,45 @@ class TaskItem extends StatelessWidget {
 
     // If completed, always show completed label
     if (task.isCompleted) {
-      return _buildDayLabel(DayCategory.completed);
+      return Column(
+        children: [
+          const SizedBox(height: 8),
+          _buildDayLabel(DayCategory.completed),
+        ],
+      );
     }
 
     final dueDate = task.dueDate!;
 
     // Check for today
     if (TaskFilters.isSameDay(dueDate, DayCategory.today.date)) {
-      return _buildDayLabel(DayCategory.today);
+      return Column(
+        children: [
+          const SizedBox(height: 8),
+          _buildDayLabel(DayCategory.today),
+        ],
+      );
     }
 
     // Check for tomorrow
     if (TaskFilters.isSameDay(dueDate, DayCategory.tomorrow.date)) {
-      return _buildDayLabel(DayCategory.tomorrow);
+      return Column(
+        children: [
+          const SizedBox(height: 8),
+          _buildDayLabel(DayCategory.tomorrow),
+        ],
+      );
     }
 
     // Other dates
-    return Text(
-      'Due: ${dueDate.toLocal().toString().split(' ')[0]}',
-      style: const TextStyle(fontSize: 12, color: Colors.purple),
+    return Column(
+      children: [
+        const SizedBox(height: 8),
+        Text(
+          'Due: ${dueDate.toLocal().toString().split(' ')[0]}',
+          style: const TextStyle(fontSize: 12, color: Colors.purple),
+        ),
+      ],
     );
   }
 
