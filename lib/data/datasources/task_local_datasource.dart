@@ -19,6 +19,7 @@ class TaskLocalDataSource {
         description: 'Evening walk in the park',
         dueDate: DateTime.now(),
         priorityType: PriorityType.low,
+        isCompleted: true,
       ),
       Task(
         title: 'Team meeting',
@@ -54,7 +55,7 @@ class TaskLocalDataSource {
       Task(
         title: 'Read a book',
         description: 'Finish reading "Clean Code" chapter 5-8',
-        dueDate: DateTime.now().add(const Duration(days: 7)),
+        dueDate: null,
         priorityType: PriorityType.low,
       ),
     ];

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/search/search_screen.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/tasks/task_screen.dart';
+import 'package:flutter_exercise1_todolist/themes/theme.dart';
+import 'package:flutter_exercise1_todolist/themes/util.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,13 +13,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = View.of(context).platformDispatcher.platformBrightness;
+
+    TextTheme textTheme = createTextTheme(context, "Roboto", "Inter");
+    MaterialTheme theme = MaterialTheme(textTheme);
     return MaterialApp(
       title: 'Todo List',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: brightness == Brightness.light ? theme.light() : theme.dark(),
       home: const MainScreen(),
     );
   }

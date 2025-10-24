@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/core/utils/task_filters.dart';
 import 'package:flutter_exercise1_todolist/data/datasources/task_local_datasource.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
+import 'package:flutter_exercise1_todolist/presentation/screens/addtask/add_new_task.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/tasks/widgets/custom_tab_bar.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/tasks/widgets/task_list_view.dart';
 
@@ -129,11 +130,11 @@ class _TasksScreenState extends State<TasksScreen>
   /// Handle add task action
   void _onAddTask() {
     // TODO: Navigate to add task screen or show dialog
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Add task functionality coming soon!'),
-        duration: Duration(seconds: 2),
-      ),
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (btx) => AddNewTaskScreen(),
     );
   }
 }

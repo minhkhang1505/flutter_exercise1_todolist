@@ -12,13 +12,17 @@ class TaskFilters {
   /// Filter tasks that are due today
   static List<Task> getTodayTasks(List<Task> tasks) {
     final now = DateTime.now();
-    return tasks.where((task) => isSameDay(task.dueDate, now)).toList();
+    return tasks
+        .where((task) => task.dueDate != null && isSameDay(task.dueDate!, now))
+        .toList();
   }
 
   /// Filter tasks that are due in the future (after today)
   static List<Task> getUpcomingTasks(List<Task> tasks) {
     final now = DateTime.now();
-    return tasks.where((task) => task.dueDate.isAfter(now)).toList();
+    return tasks
+        .where((task) => task.dueDate != null && task.dueDate!.isAfter(now))
+        .toList();
   }
 
   /// Filter completed tasks

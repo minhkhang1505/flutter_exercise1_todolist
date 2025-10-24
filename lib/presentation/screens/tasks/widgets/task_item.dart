@@ -24,15 +24,16 @@ class TaskItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.fromLTRB(0, 8, 8, 8),
       decoration: BoxDecoration(
-        border: Border.all(width: 2, color: colorScheme.primaryContainer),
-        color: colorScheme.primaryContainer.withAlpha(50),
+        border: Border.all(width: 2, color: colorScheme.primary.withAlpha(20)),
+        color: colorScheme.primaryContainer.withAlpha(10),
         borderRadius: const BorderRadius.all(Radius.circular(16)),
       ),
       child: Row(
         children: [
           _buildCheckbox(),
           Expanded(child: _buildTaskContent(colorScheme)),
-          if (task.priorityType != null) _buildPriorityIcon(),
+          if (task.priorityType != null && !task.isCompleted)
+            _buildPriorityIcon(),
         ],
       ),
     );
@@ -48,8 +49,10 @@ class TaskItem extends StatelessWidget {
       children: [
         _buildTitle(colorScheme),
         _buildDescription(colorScheme),
-        const SizedBox(height: 12),
-        _buildDueDate(),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [const SizedBox(height: 12), _buildDueDate()],
+        ),
       ],
     );
   }
@@ -71,23 +74,39 @@ class TaskItem extends StatelessWidget {
       task.description,
       style: TextStyle(
         fontSize: 14,
-        color: colorScheme.onSurfaceVariant,
+        color: colorScheme.onSurfaceVariant.withAlpha(150),
         decoration: isCompleted ? TextDecoration.lineThrough : null,
       ),
     );
   }
 
   Widget _buildDueDate() {
-    if (TaskFilters.isSameDay(task.dueDate, DayCategory.today.date)) {
-      return _buildDayLabel(DayCategory.today);
-    } else if (TaskFilters.isSameDay(task.dueDate, DayCategory.tomorrow.date)) {
-      return _buildDayLabel(DayCategory.tomorrow);
-    } else {
-      return Text(
-        'Due: ${task.dueDate.toLocal().toString().split(' ')[0]}',
-        style: const TextStyle(fontSize: 12, color: Colors.purple),
-      );
+    if (task.dueDate == null) {
+      return const SizedBox.shrink();
     }
+
+    // If completed, always show completed label
+    if (task.isCompleted) {
+      return _buildDayLabel(DayCategory.completed);
+    }
+
+    final dueDate = task.dueDate!;
+
+    // Check for today
+    if (TaskFilters.isSameDay(dueDate, DayCategory.today.date)) {
+      return _buildDayLabel(DayCategory.today);
+    }
+
+    // Check for tomorrow
+    if (TaskFilters.isSameDay(dueDate, DayCategory.tomorrow.date)) {
+      return _buildDayLabel(DayCategory.tomorrow);
+    }
+
+    // Other dates
+    return Text(
+      'Due: ${dueDate.toLocal().toString().split(' ')[0]}',
+      style: const TextStyle(fontSize: 12, color: Colors.purple),
+    );
   }
 
   Widget _buildDayLabel(DayCategory category) {

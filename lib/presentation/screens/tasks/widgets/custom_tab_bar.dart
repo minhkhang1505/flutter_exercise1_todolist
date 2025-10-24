@@ -14,11 +14,10 @@ class CustomTabBar extends StatelessWidget {
     return ClipRRect(
       borderRadius: const BorderRadius.all(Radius.circular(50)),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 4),
         height: 45,
         color: colorScheme.surfaceContainerHigh,
         child: Padding(
-          padding: const EdgeInsets.all(3.0),
+          padding: const EdgeInsets.all(4.0),
           child: TabBar(
             controller: controller,
             indicator: BoxDecoration(
