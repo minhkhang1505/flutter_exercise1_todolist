@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_exercise1_todolist/presentation/screens/addtask/models/add_task_form_data.dart';
-import 'package:flutter_exercise1_todolist/presentation/screens/addtask/utils/date_time_formatter.dart';
-import 'package:flutter_exercise1_todolist/presentation/screens/addtask/utils/priority_formatter.dart';
-import 'package:flutter_exercise1_todolist/presentation/screens/addtask/widgets/priority_picker_dialog.dart';
-import 'package:flutter_exercise1_todolist/presentation/screens/addtask/widgets/task_action_button.dart';
-import 'package:flutter_exercise1_todolist/presentation/screens/addtask/widgets/task_input_field.dart';
-import 'package:flutter_exercise1_todolist/presentation/screens/addtask/widgets/task_submit_button.dart';
+import '../../utils/models/add_task_form_data.dart';
+import '../../utils/formatters/date_time_formatter.dart';
+import '../../utils/formatters/priority_formatter.dart';
+import '../../widgets/addtask/priority_picker_dialog.dart';
+import '../../widgets/addtask/task_action_button.dart';
+import '../../widgets/addtask/task_input_field.dart';
+import '../../widgets/addtask/task_submit_button.dart';
 
 class AddNewTaskScreen extends StatefulWidget {
   const AddNewTaskScreen({super.key});

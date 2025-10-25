@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/core/utils/task_filters.dart';
 import 'package:flutter_exercise1_todolist/data/datasources/task_local_datasource.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
-import 'package:flutter_exercise1_todolist/presentation/screens/addtask/add_new_task.dart';
+import 'package:flutter_exercise1_todolist/presentation/screens/addtask/add_new_task_screen.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/tasks/widgets/custom_tab_bar.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/tasks/widgets/task_list_view.dart';
 
