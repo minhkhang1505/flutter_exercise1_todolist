@@ -7,17 +7,17 @@ import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 class TasksController {
   final TaskLocalDataSource _dataSource = TaskLocalDataSource();
 
-  List<Task> _tasks = [];
+  List<TaskEntity> _tasks = [];
   final Map<int, bool> _completedTasks = {};
 
   /// Get all tasks
-  List<Task> get allTasks => _tasks;
+  List<TaskEntity> get allTasks => _tasks;
 
   /// Get today's tasks
-  List<Task> get todayTasks => TaskFilters.getTodayTasks(_tasks);
+  List<TaskEntity> get todayTasks => TaskFilters.getTodayTasks(_tasks);
 
   /// Get upcoming tasks
-  List<Task> get upcomingTasks => TaskFilters.getUpcomingTasks(_tasks);
+  List<TaskEntity> get upcomingTasks => TaskFilters.getUpcomingTasks(_tasks);
 
   /// Get completion status map
   Map<int, bool> get completedTasks => _completedTasks;
@@ -33,22 +33,8 @@ class TasksController {
   }
 
   /// Add a new task to the list
-  void addTask(Task task) {
+  void addTask(TaskEntity task) {
     _tasks.add(task);
-  }
-
-  /// Remove a task from the list
-  void removeTask(int taskId) {
-    _tasks.removeWhere((task) => task.id == taskId);
-    _completedTasks.remove(taskId);
-  }
-
-  /// Update an existing task
-  void updateTask(Task updatedTask) {
-    final index = _tasks.indexWhere((task) => task.id == updatedTask.id);
-    if (index != -1) {
-      _tasks[index] = updatedTask;
-    }
   }
 
   /// Clear all completed tasks

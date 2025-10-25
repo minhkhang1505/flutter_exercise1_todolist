@@ -1,7 +1,7 @@
 import 'package:flutter_exercise1_todolist/core/enums/priority_type.dart';
 
 /// Task entity representing a todo item
-class Task {
+class TaskEntity {
   final int id;
   final String title;
   final String description;
@@ -9,17 +9,17 @@ class Task {
   final bool isCompleted;
   final PriorityType? priorityType;
 
-  Task({
-    int? id,
+  TaskEntity({
+    required this.id,
     required this.title,
     required this.description,
     required this.dueDate,
     this.isCompleted = false,
     required this.priorityType,
-  }) : id = id ?? DateTime.now().millisecondsSinceEpoch + title.hashCode;
+  });
 
   /// Create a copy of this task with updated fields
-  Task copyWith({
+  TaskEntity copyWith({
     int? id,
     String? title,
     String? description,
@@ -27,7 +27,7 @@ class Task {
     bool? isCompleted,
     PriorityType? priorityType,
   }) {
-    return Task(
+    return TaskEntity(
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,

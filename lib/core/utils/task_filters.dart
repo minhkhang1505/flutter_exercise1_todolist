@@ -10,7 +10,7 @@ class TaskFilters {
   }
 
   /// Filter tasks that are due today
-  static List<Task> getTodayTasks(List<Task> tasks) {
+  static List<TaskEntity> getTodayTasks(List<TaskEntity> tasks) {
     final now = DateTime.now();
     return tasks
         .where((task) => task.dueDate != null && isSameDay(task.dueDate!, now))
@@ -18,7 +18,7 @@ class TaskFilters {
   }
 
   /// Filter tasks that are due in the future (after today)
-  static List<Task> getUpcomingTasks(List<Task> tasks) {
+  static List<TaskEntity> getUpcomingTasks(List<TaskEntity> tasks) {
     final now = DateTime.now();
     return tasks
         .where((task) => task.dueDate != null && task.dueDate!.isAfter(now))
@@ -26,8 +26,8 @@ class TaskFilters {
   }
 
   /// Filter completed tasks
-  static List<Task> getCompletedTasks(
-    List<Task> tasks,
+  static List<TaskEntity> getCompletedTasks(
+    List<TaskEntity> tasks,
     Map<int, bool> completionStatus,
   ) {
     return tasks
@@ -36,8 +36,8 @@ class TaskFilters {
   }
 
   /// Filter incomplete tasks
-  static List<Task> getIncompleteTasks(
-    List<Task> tasks,
+  static List<TaskEntity> getIncompleteTasks(
+    List<TaskEntity> tasks,
     Map<int, bool> completionStatus,
   ) {
     return tasks
@@ -46,8 +46,8 @@ class TaskFilters {
   }
 
   /// Filter tasks by priority
-  static List<Task> getTasksByPriority(
-    List<Task> tasks,
+  static List<TaskEntity> getTasksByPriority(
+    List<TaskEntity> tasks,
     List<String> priorities,
   ) {
     return tasks

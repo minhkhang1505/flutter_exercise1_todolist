@@ -5,7 +5,7 @@ import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 
 /// Widget representing a single task item in the list
 class TaskItem extends StatelessWidget {
-  final Task task;
+  final TaskEntity task;
   final bool isCompleted;
   final Function(bool?) onChanged;
 

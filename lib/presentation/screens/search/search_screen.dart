@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_exercise1_todolist/data/repositories/repository_implement.dart';
+import 'package:flutter_exercise1_todolist/domain/usecases/search_tasks_usecase.dart';
+import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
+import '../../utils/controllers/search_controller.dart' as search_ctrl;
 import '../../widgets/search/search_app_bar.dart';
 import '../../widgets/search/search_bar_widget.dart';
 import '../../widgets/search/search_suggestions_widget.dart';
@@ -15,11 +19,19 @@ class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   bool _isSearchFocused = false;
+  late search_ctrl.SearchController _controller;
+  List<TaskEntity> _searchResults = [];
 
   @override
   void initState() {
     super.initState();
     _searchFocusNode.addListener(_onFocusChange);
+
+    // Initialize search controller with use case
+    final repository = TaskRepositoryImpl();
+    _controller = search_ctrl.SearchController(
+      searchTasksUseCase: SearchTasksUseCase(repository),
+    );
   }
 
   @override
@@ -38,17 +50,34 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _clearSearch() {
     _searchController.clear();
-    setState(() {});
+    _controller.clearSearch();
+    setState(() {
+      _searchResults = [];
+    });
   }
 
   void _handleSuggestionTap(String text) {
     _searchController.text = text;
-    setState(() {});
+    _performSearch(text);
   }
 
   void _handleBackPress() {
     _searchFocusNode.unfocus();
     _clearSearch();
+  }
+
+  Future<void> _performSearch(String query) async {
+    if (query.trim().isEmpty) {
+      setState(() {
+        _searchResults = [];
+      });
+      return;
+    }
+
+    await _controller.searchTasks(query);
+    setState(() {
+      _searchResults = _controller.searchResults;
+    });
   }
 
   @override
@@ -65,8 +94,7 @@ class _SearchScreenState extends State<SearchScreen> {
               onClear: _clearSearch,
               onBack: _handleBackPress,
               onChanged: (value) {
-                setState(() {}); // Rebuild to show/hide clear button
-                // TODO: Implement search logic
+                _performSearch(value);
               },
             ),
             Expanded(
@@ -75,7 +103,11 @@ class _SearchScreenState extends State<SearchScreen> {
                       onSuggestionTap: _handleSuggestionTap,
                       onTagTap: _handleSuggestionTap,
                     )
-                  : SearchResultsWidget(searchQuery: _searchController.text),
+                  : SearchResultsWidget(
+                      searchQuery: _searchController.text,
+                      searchResults: _searchResults,
+                      isLoading: _controller.isLoading,
+                    ),
             ),
           ],
         ),

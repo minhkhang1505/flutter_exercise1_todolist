@@ -6,9 +6,9 @@ import 'task_list_view.dart';
 /// Widget containing the tab bar and tab views for task filtering
 class TasksTabSection extends StatelessWidget {
   final TabController tabController;
-  final List<Task> allTasks;
-  final List<Task> todayTasks;
-  final List<Task> upcomingTasks;
+  final List<TaskEntity> allTasks;
+  final List<TaskEntity> todayTasks;
+  final List<TaskEntity> upcomingTasks;
   final Map<int, bool> completedTasks;
   final Function(int, bool?) onTaskToggle;
 

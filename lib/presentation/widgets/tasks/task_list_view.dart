@@ -4,7 +4,7 @@ import 'package:flutter_exercise1_todolist/presentation/widgets/tasks/task_item.
 
 /// Reusable list view widget for displaying tasks
 class TaskListView extends StatelessWidget {
-  final List<Task> tasks;
+  final List<TaskEntity> tasks;
   final Map<int, bool> completedTasks;
   final Function(int, bool?) onTaskToggle;
 

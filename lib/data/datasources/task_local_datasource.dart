@@ -11,48 +11,55 @@ class TaskLocalDataSource {
   TaskLocalDataSource._internal();
 
   /// Get sample tasks for demonstration
-  List<Task> getSampleTasks() {
+  List<TaskEntity> getSampleTasks() {
     return [
       // Today's tasks (3 tasks)
-      Task(
+      TaskEntity(
+        id: 1,
         title: 'Walk the dog',
         description: 'Evening walk in the park',
         dueDate: DateTime.now(),
         priorityType: PriorityType.low,
         isCompleted: true,
       ),
-      Task(
+      TaskEntity(
+        id: 2,
         title: 'Team meeting',
         description: 'Weekly sprint planning meeting at 2 PM',
         dueDate: DateTime.now(),
         priorityType: null,
       ),
-      Task(
+      TaskEntity(
+        id: 3,
         title: 'Reply to emails',
         description: 'Check and respond to pending emails',
         dueDate: DateTime.now(),
         priorityType: PriorityType.medium,
       ),
       // Future tasks (4 tasks)
-      Task(
+      TaskEntity(
+        id: 4,
         title: 'Buy groceries',
         description: 'Milk, Bread, Eggs, Butter',
         dueDate: DateTime.now().add(const Duration(days: 1)),
         priorityType: PriorityType.medium,
       ),
-      Task(
+      TaskEntity(
+        id: 5,
         title: 'Pay bills',
         description: 'Electricity and water bills due soon',
         dueDate: DateTime.now().add(const Duration(days: 2)),
         priorityType: PriorityType.high,
       ),
-      Task(
+      TaskEntity(
+        id: 6,
         title: 'Finish project report',
         description: 'Complete the final draft of the project report',
         dueDate: DateTime.now().add(const Duration(days: 3)),
         priorityType: PriorityType.high,
       ),
-      Task(
+      TaskEntity(
+        id: 7,
         title: 'Read a book',
         description: 'Finish reading "Clean Code" chapter 5-8',
         dueDate: null,
@@ -61,22 +68,33 @@ class TaskLocalDataSource {
     ];
   }
 
+  Future<List<TaskEntity>> searchTasks(String query) async {
+    final allTasks = getSampleTasks();
+    return allTasks
+        .where(
+          (task) =>
+              task.title.toLowerCase().contains(query.toLowerCase()) ||
+              task.description.toLowerCase().contains(query.toLowerCase()),
+        )
+        .toList();
+  }
+
   /// Get all tasks
   /// In a real app, this would fetch from a database
-  Future<List<Task>> getTasks() async {
+  Future<List<TaskEntity>> getTasks() async {
     // Simulate network delay
     await Future.delayed(const Duration(milliseconds: 100));
     return getSampleTasks();
   }
 
   /// Add a new task
-  Future<void> addTask(Task task) async {
+  Future<void> addTask(TaskEntity task) async {
     // TODO: Implement actual storage
     await Future.delayed(const Duration(milliseconds: 100));
   }
 
   /// Update an existing task
-  Future<void> updateTask(Task task) async {
+  Future<void> updateTask(TaskEntity task) async {
     // TODO: Implement actual storage
     await Future.delayed(const Duration(milliseconds: 100));
   }
