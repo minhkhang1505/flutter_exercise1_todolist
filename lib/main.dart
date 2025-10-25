@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/search/search_screen.dart';
-import 'package:flutter_exercise1_todolist/presentation/screens/tasks/task_screen.dart';
+import 'package:flutter_exercise1_todolist/presentation/screens/tasks/tasks_screen.dart';
 import 'package:flutter_exercise1_todolist/themes/theme.dart';
 import 'package:flutter_exercise1_todolist/themes/util.dart';
 

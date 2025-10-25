@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
-import 'package:flutter_exercise1_todolist/presentation/screens/tasks/widgets/task_item.dart';
+import 'package:flutter_exercise1_todolist/presentation/widgets/tasks/task_item.dart';
 
 /// Reusable list view widget for displaying tasks
 class TaskListView extends StatelessWidget {
