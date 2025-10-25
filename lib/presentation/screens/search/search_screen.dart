@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/data/repositories/repository_implement.dart';
 import 'package:flutter_exercise1_todolist/domain/usecases/search_tasks_usecase.dart';
@@ -19,6 +21,7 @@ class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
   bool _isSearchFocused = false;
+  Timer? _debounce;
   late search_ctrl.SearchController _controller;
   List<TaskEntity> _searchResults = [];
 
@@ -39,6 +42,7 @@ class _SearchScreenState extends State<SearchScreen> {
     _searchController.dispose();
     _searchFocusNode.removeListener(_onFocusChange);
     _searchFocusNode.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -66,6 +70,14 @@ class _SearchScreenState extends State<SearchScreen> {
     _clearSearch();
   }
 
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    _debounce = Timer(const Duration(seconds: 1), () {
+      _performSearch(query);
+    });
+  }
+
   Future<void> _performSearch(String query) async {
     if (query.trim().isEmpty) {
       setState(() {
@@ -82,6 +94,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final hasQuery = _searchController.text.trim().isNotEmpty;
     return Scaffold(
       appBar: _isSearchFocused ? null : const SearchAppBar(),
       body: SafeArea(
@@ -93,21 +106,25 @@ class _SearchScreenState extends State<SearchScreen> {
               isSearchFocused: _isSearchFocused,
               onClear: _clearSearch,
               onBack: _handleBackPress,
-              onChanged: (value) {
-                _performSearch(value);
-              },
+              onChanged: _onSearchChanged,
             ),
             Expanded(
-              child: _isSearchFocused
-                  ? SearchSuggestionsWidget(
-                      onSuggestionTap: _handleSuggestionTap,
-                      onTagTap: _handleSuggestionTap,
-                    )
-                  : SearchResultsWidget(
+              child: hasQuery
+                  ? SearchResultsWidget(
                       searchQuery: _searchController.text,
                       searchResults: _searchResults,
                       isLoading: _controller.isLoading,
-                    ),
+                    )
+                  : (_isSearchFocused
+                        ? SearchSuggestionsWidget(
+                            onSuggestionTap: _handleSuggestionTap,
+                            onTagTap: _handleSuggestionTap,
+                          )
+                        : SearchResultsWidget(
+                            searchQuery: _searchController.text,
+                            searchResults: _searchResults,
+                            isLoading: _controller.isLoading,
+                          )),
             ),
           ],
         ),
