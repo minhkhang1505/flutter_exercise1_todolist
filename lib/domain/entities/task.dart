@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/core/enums/priority_type.dart';
 
 /// Task entity representing a todo item
@@ -6,6 +7,8 @@ class TaskEntity {
   final String title;
   final String description;
   final DateTime? dueDate;
+  final DateTime? startDate;
+  final TimeOfDay? deadline;
   final bool isCompleted;
   final PriorityType? priorityType;
 
@@ -14,6 +17,8 @@ class TaskEntity {
     required this.title,
     required this.description,
     required this.dueDate,
+    required this.startDate,
+    required this.deadline,
     this.isCompleted = false,
     required this.priorityType,
   });
@@ -24,6 +29,8 @@ class TaskEntity {
     String? title,
     String? description,
     DateTime? dueDate,
+    DateTime? startDate,
+    TimeOfDay? deadline,
     bool? isCompleted,
     PriorityType? priorityType,
   }) {
@@ -32,6 +39,8 @@ class TaskEntity {
       title: title ?? this.title,
       description: description ?? this.description,
       dueDate: dueDate ?? this.dueDate,
+      startDate: startDate ?? this.startDate,
+      deadline: deadline ?? this.deadline,
       isCompleted: isCompleted ?? this.isCompleted,
       priorityType: priorityType ?? this.priorityType,
     );

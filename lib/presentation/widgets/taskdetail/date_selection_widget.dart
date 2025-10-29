@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DateSelectionWidget extends StatelessWidget {
-  final DateTime selectedStartDate;
-  final DateTime selectedDueDate;
+  final DateTime? selectedStartDate;
+  final DateTime? selectedDueDate;
   final VoidCallback onSelectStartDate;
   final VoidCallback onSelectDueDate;
 
@@ -38,14 +38,18 @@ class DateSelectionWidget extends StatelessWidget {
               ActionChip(
                 onPressed: onSelectStartDate,
                 label: Text(
-                  "${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}",
+                  selectedStartDate != null
+                      ? "${selectedStartDate!.day}/${selectedStartDate!.month}/${selectedStartDate!.year}"
+                      : "--/--/----",
                 ),
               ),
               Icon(Icons.arrow_right),
               ActionChip(
                 onPressed: onSelectDueDate,
                 label: Text(
-                  "${selectedDueDate.day}/${selectedDueDate.month}/${selectedDueDate.year}",
+                  selectedDueDate != null
+                      ? "${selectedDueDate!.day}/${selectedDueDate!.month}/${selectedDueDate!.year}"
+                      : "--/--/----",
                 ),
               ),
             ],

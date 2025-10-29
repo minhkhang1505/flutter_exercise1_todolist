@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DeadlineWidget extends StatelessWidget {
-  final TimeOfDay selectedTime;
-  final DateTime selectedDueDate;
+  final TimeOfDay? selectedTime;
+  final DateTime? selectedDueDate;
   final VoidCallback onSelectTime;
 
   const DeadlineWidget({
@@ -30,7 +30,7 @@ class DeadlineWidget extends StatelessWidget {
           GestureDetector(
             onTap: onSelectTime,
             child: Text(
-              "${selectedTime.hour}:${selectedTime.minute}, ${selectedDueDate.day}/${selectedDueDate.month}/${selectedDueDate.year}",
+              selectedDueDate != null ? " ${selectedTime != null ? selectedTime!.hour : 0}:${selectedTime != null ? selectedTime!.minute : 0}, ${selectedDueDate!.day}/${selectedDueDate!.month}/${selectedDueDate!.year}" : "--/--/----",
             ),
           ),
         ],

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/core/enums/priority_type.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 
@@ -12,13 +13,16 @@ class TaskLocalDataSource {
 
   /// Get sample tasks for demonstration
   List<TaskEntity> getSampleTasks() {
+    final now = DateTime.now();
     return [
       // Today's tasks (3 tasks)
       TaskEntity(
         id: 1,
         title: 'Walk the dog',
         description: 'Evening walk in the park',
-        dueDate: DateTime.now(),
+        dueDate: now,
+        startDate: now.subtract(const Duration(hours: 2)),
+        deadline: TimeOfDay(hour: 18, minute: 0),
         priorityType: PriorityType.low,
         isCompleted: true,
       ),
@@ -26,14 +30,18 @@ class TaskLocalDataSource {
         id: 2,
         title: 'Team meeting',
         description: 'Weekly sprint planning meeting at 2 PM',
-        dueDate: DateTime.now(),
+        dueDate: now,
+        startDate: now.subtract(const Duration(hours: 1)),
+        deadline: TimeOfDay(hour: 14, minute: 0),
         priorityType: null,
       ),
       TaskEntity(
         id: 3,
         title: 'Reply to emails',
         description: 'Check and respond to pending emails',
-        dueDate: DateTime.now(),
+        dueDate: now,
+        startDate: now.subtract(const Duration(hours: 3)),
+        deadline: TimeOfDay(hour: 17, minute: 30),
         priorityType: PriorityType.medium,
       ),
       // Future tasks (4 tasks)
@@ -41,21 +49,27 @@ class TaskLocalDataSource {
         id: 4,
         title: 'Buy groceries',
         description: 'Milk, Bread, Eggs, Butter',
-        dueDate: DateTime.now().add(const Duration(days: 1)),
+        dueDate: now.add(const Duration(days: 1)),
+        startDate: now,
+        deadline: TimeOfDay(hour: 19, minute: 0),
         priorityType: PriorityType.medium,
       ),
       TaskEntity(
         id: 5,
         title: 'Pay bills',
         description: 'Electricity and water bills due soon',
-        dueDate: DateTime.now().add(const Duration(days: 2)),
+        dueDate: now.add(const Duration(days: 2)),
+        startDate: now.add(const Duration(days: 1)),
+        deadline: TimeOfDay(hour: 10, minute: 0),
         priorityType: PriorityType.high,
       ),
       TaskEntity(
         id: 6,
         title: 'Finish project report',
         description: 'Complete the final draft of the project report',
-        dueDate: DateTime.now().add(const Duration(days: 3)),
+        dueDate: now.add(const Duration(days: 3)),
+        startDate: now.add(const Duration(days: 2)),
+        deadline: TimeOfDay(hour: 16, minute: 0),
         priorityType: PriorityType.high,
       ),
       TaskEntity(
@@ -63,6 +77,8 @@ class TaskLocalDataSource {
         title: 'Read a book',
         description: 'Finish reading "Clean Code" chapter 5-8',
         dueDate: null,
+        startDate: now,
+        deadline: TimeOfDay(hour: 21, minute: 0),
         priorityType: PriorityType.low,
       ),
     ];

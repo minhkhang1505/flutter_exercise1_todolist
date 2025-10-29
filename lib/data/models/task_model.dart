@@ -6,6 +6,8 @@ class TaskModel extends TaskEntity {
     required super.title,
     required super.description,
     super.dueDate,
+    super.startDate,
+    super.deadline,
     super.priorityType,
     super.isCompleted,
   });
@@ -15,6 +17,8 @@ class TaskModel extends TaskEntity {
     title: title,
     description: description,
     dueDate: dueDate,
+    startDate: startDate,
+    deadline: deadline,
     isCompleted: isCompleted,
     priorityType: priorityType,
   );
