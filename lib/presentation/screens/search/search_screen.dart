@@ -5,7 +5,7 @@ import 'package:flutter_exercise1_todolist/data/repositories/repository_implemen
 import 'package:flutter_exercise1_todolist/domain/usecases/search_tasks_usecase.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/taskdetail/task_detail_screen.dart';
-import '../../utils/controllers/search_controller.dart' as search_ctrl;
+import '../../viewmodels/search_controller.dart' as search_ctrl;
 import '../../widgets/search/search_app_bar.dart';
 import '../../widgets/search/search_bar_widget.dart';
 import '../../widgets/search/search_suggestions_widget.dart';

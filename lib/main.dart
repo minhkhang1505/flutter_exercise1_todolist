@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/search/search_screen.dart';
-import 'package:flutter_exercise1_todolist/presentation/screens/taskdetail/task_detail_screen.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/tasks/tasks_screen.dart';
-import 'package:flutter_exercise1_todolist/themes/theme.dart';
-import 'package:flutter_exercise1_todolist/themes/util.dart';
+import 'package:flutter_exercise1_todolist/core/themes/theme.dart';
+import 'package:flutter_exercise1_todolist/core/themes/util.dart';
 
 void main() {
   runApp(const MyApp());

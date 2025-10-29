@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../utils/models/add_task_form_data.dart';
-import '../../utils/formatters/date_time_formatter.dart';
-import '../../utils/formatters/priority_formatter.dart';
+import '../../models/add_task_form_data.dart';
+import '../../../core/formatters/date_time_formatter.dart';
+import '../../../core/formatters/priority_formatter.dart';
 import '../../widgets/addtask/priority_picker_dialog.dart';
 import '../../widgets/addtask/task_action_button.dart';
 import '../../widgets/addtask/task_input_field.dart';

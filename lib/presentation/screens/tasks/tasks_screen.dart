@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/taskdetail/task_detail_screen.dart';
 import '../addtask/add_new_task_screen.dart';
-import '../../utils/controllers/tasks_controller.dart';
+import '../../viewmodels/tasks_controller.dart';
 import '../../widgets/tasks/tasks_app_bar.dart';
 import '../../widgets/tasks/tasks_tab_section.dart';
 import '../../widgets/tasks/tasks_floating_button.dart';
