@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       title: 'Todo List',
       debugShowCheckedModeBanner: false,
       theme: brightness == Brightness.light ? theme.light() : theme.dark(),
-      home: const TaskDetailScreen(),
+      home: const MainScreen(),
     );
   }
 }

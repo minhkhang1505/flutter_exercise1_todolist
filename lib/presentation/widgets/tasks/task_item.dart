@@ -8,12 +8,14 @@ class TaskItem extends StatelessWidget {
   final TaskEntity task;
   final bool isCompleted;
   final Function(bool?) onChanged;
+  final Function(int) onTaskClicked;
 
   const TaskItem({
     super.key,
     required this.task,
     required this.isCompleted,
     required this.onChanged,
+    required this.onTaskClicked,
   });
 
   @override
@@ -31,7 +33,12 @@ class TaskItem extends StatelessWidget {
       child: Row(
         children: [
           _buildCheckbox(),
-          Expanded(child: _buildTaskContent(colorScheme)),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => onTaskClicked(task.id),
+              child: _buildTaskContent(colorScheme),
+            ),
+          ),
           if (task.priorityType != null && !task.isCompleted)
             _buildPriorityIcon(),
         ],

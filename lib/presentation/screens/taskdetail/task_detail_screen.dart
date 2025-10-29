@@ -8,7 +8,8 @@ import '../../widgets/taskdetail/rename_dialog.dart';
 import '../../widgets/taskdetail/redescription_dialog.dart';
 
 class TaskDetailScreen extends StatefulWidget {
-  const TaskDetailScreen({super.key});
+  final int taskId;
+  const TaskDetailScreen({super.key, required this.taskId});
 
   @override
   State<TaskDetailScreen> createState() => _TaskDetailScreenState();

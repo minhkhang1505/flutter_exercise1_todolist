@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/data/repositories/repository_implement.dart';
 import 'package:flutter_exercise1_todolist/domain/usecases/search_tasks_usecase.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
+import 'package:flutter_exercise1_todolist/presentation/screens/taskdetail/task_detail_screen.dart';
 import '../../utils/controllers/search_controller.dart' as search_ctrl;
 import '../../widgets/search/search_app_bar.dart';
 import '../../widgets/search/search_bar_widget.dart';
@@ -92,6 +93,17 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
+  void _onTaskClicked(int taskId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => TaskDetailScreen(taskId: taskId)),
+    ).then((value) {
+      if (value != null) {
+        // Optionally refresh search results or perform other actions
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasQuery = _searchController.text.trim().isNotEmpty;
@@ -114,6 +126,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       searchQuery: _searchController.text,
                       searchResults: _searchResults,
                       isLoading: _controller.isLoading,
+                      onTaskClicked: _onTaskClicked,
                     )
                   : (_isSearchFocused
                         ? SearchSuggestionsWidget(
@@ -124,6 +137,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             searchQuery: _searchController.text,
                             searchResults: _searchResults,
                             isLoading: _controller.isLoading,
+                            onTaskClicked: _onTaskClicked,
                           )),
             ),
           ],

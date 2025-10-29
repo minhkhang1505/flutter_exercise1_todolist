@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_exercise1_todolist/presentation/screens/taskdetail/task_detail_screen.dart';
 import '../addtask/add_new_task_screen.dart';
 import '../../utils/controllers/tasks_controller.dart';
 import '../../widgets/tasks/tasks_app_bar.dart';
@@ -38,6 +39,17 @@ class _TasksScreenState extends State<TasksScreen>
     if (mounted) setState(() {});
   }
 
+  void _onTaskClicked(int taskId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => TaskDetailScreen(taskId: taskId)),
+    ).then((value) {
+      if (value != null) {
+        _loadTasks();
+      }
+    });
+  }
+
   /// Toggle task completion status
   void _toggleTaskCompletion(int taskId, bool? value) {
     setState(() {
@@ -74,6 +86,7 @@ class _TasksScreenState extends State<TasksScreen>
             upcomingTasks: _controller.upcomingTasks,
             completedTasks: _controller.completedTasks,
             onTaskToggle: _toggleTaskCompletion,
+            onTaskClicked: _onTaskClicked,
           ),
         ),
       ),

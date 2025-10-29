@@ -11,6 +11,7 @@ class TasksTabSection extends StatelessWidget {
   final List<TaskEntity> upcomingTasks;
   final Map<int, bool> completedTasks;
   final Function(int, bool?) onTaskToggle;
+  final Function(int) onTaskClicked;
 
   const TasksTabSection({
     super.key,
@@ -20,6 +21,7 @@ class TasksTabSection extends StatelessWidget {
     required this.upcomingTasks,
     required this.completedTasks,
     required this.onTaskToggle,
+    required this.onTaskClicked,
   });
 
   @override
@@ -38,16 +40,19 @@ class TasksTabSection extends StatelessWidget {
                 tasks: allTasks,
                 completedTasks: completedTasks,
                 onTaskToggle: onTaskToggle,
+                onTaskClicked: onTaskClicked,
               ),
               TaskListView(
                 tasks: todayTasks,
                 completedTasks: completedTasks,
                 onTaskToggle: onTaskToggle,
+                onTaskClicked: onTaskClicked,
               ),
               TaskListView(
                 tasks: upcomingTasks,
                 completedTasks: completedTasks,
                 onTaskToggle: onTaskToggle,
+                onTaskClicked: onTaskClicked,
               ),
             ],
           ),

@@ -6,12 +6,14 @@ class SearchResultsWidget extends StatelessWidget {
   final String searchQuery;
   final List<TaskEntity> searchResults;
   final bool isLoading;
+  final Function(int) onTaskClicked;
 
   const SearchResultsWidget({
     super.key,
     required this.searchQuery,
     this.searchResults = const [],
     this.isLoading = false,
+    required this.onTaskClicked,
   });
 
   @override
@@ -68,6 +70,7 @@ class SearchResultsWidget extends StatelessWidget {
           onChanged: (value) {
             // TODO: Handle task completion toggle
           },
+          onTaskClicked: onTaskClicked,
         );
       },
     );

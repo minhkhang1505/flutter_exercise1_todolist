@@ -7,12 +7,14 @@ class TaskListView extends StatelessWidget {
   final List<TaskEntity> tasks;
   final Map<int, bool> completedTasks;
   final Function(int, bool?) onTaskToggle;
+  final Function(int) onTaskClicked;
 
   const TaskListView({
     super.key,
     required this.tasks,
     required this.completedTasks,
     required this.onTaskToggle,
+    required this.onTaskClicked,
   });
 
   @override
@@ -30,6 +32,7 @@ class TaskListView extends StatelessWidget {
           task: task,
           isCompleted: completedTasks[task.id] ?? task.isCompleted,
           onChanged: (value) => onTaskToggle(task.id, value),
+          onTaskClicked: onTaskClicked,
         );
       },
     );
