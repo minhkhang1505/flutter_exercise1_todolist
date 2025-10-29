@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_exercise1_todolist/presentation/viewmodels/add_task_viewmodel.dart';
 import '../../models/add_task_form_data.dart';
-import '../../../core/formatters/date_time_formatter.dart';
-import '../../../core/formatters/priority_formatter.dart';
 import '../../widgets/addtask/priority_picker_dialog.dart';
-import '../../widgets/addtask/task_action_button.dart';
-import '../../widgets/addtask/task_input_field.dart';
-import '../../widgets/addtask/task_submit_button.dart';
+import '../../widgets/addtask/task_input_section.dart';
+import '../../widgets/addtask/task_action_section.dart';
+import '../../widgets/addtask/task_submit_section.dart';
 
 class AddNewTaskScreen extends StatefulWidget {
   const AddNewTaskScreen({super.key});
@@ -18,6 +17,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _formData = AddTaskFormData();
+  final viewModel = AddTaskViewmodel();
 
   @override
   void dispose() {
@@ -73,20 +73,45 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
   }
 
   /// Handle form submission
-  void _handleSubmit() {
+  Future<void> _handleSubmit() async {
     _formData.title = _titleController.text;
     _formData.description = _descriptionController.text;
 
     if (!_formData.isValid()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a task title')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter a task title')),
+        );
+      }
       return;
     }
 
-    // TODO: Save the task using a repository or provider
-    // For now, just close the bottom sheet
-    Navigator.of(context).pop(_formData);
+    // Show loading indicator
+    if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Adding task...')));
+    }
+
+    // Add task through viewmodel
+    final success = await viewModel.addNewTask(_formData);
+
+    if (!mounted) return; // Check if widget is still mounted
+
+    if (success) {
+      // Show success message
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Task added successfully!')));
+
+      // Close the bottom sheet
+      Navigator.of(context).pop(_formData);
+    } else {
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to add task: ${viewModel.error}')),
+      );
+    }
   }
 
   @override
@@ -107,90 +132,25 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildInputFields(),
-            _buildActionButtons(colorScheme),
-            _buildSubmitButton(colorScheme),
+            TaskInputSection(
+              titleController: _titleController,
+              descriptionController: _descriptionController,
+            ),
+            TaskActionSection(
+              dueDate: _formData.dueDate,
+              dueTime: _formData.dueTime,
+              priority: _formData.priority,
+              onSelectDate: _selectDate,
+              onSelectTime: _selectTime,
+              onSelectPriority: _showPriorityDialog,
+            ),
+            TaskSubmitSection(
+              colorScheme: colorScheme,
+              onSubmit: viewModel.isLoading ? null : _handleSubmit,
+            ),
           ],
         ),
       ),
-    );
-  }
-
-  /// Build title and description input fields
-  Widget _buildInputFields() {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: TaskInputField(
-            hintText: "e.g., Research Artificial Intelligence",
-            fontSize: 20,
-            controller: _titleController,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: TaskInputField(
-            hintText: "Description",
-            fontSize: 16,
-            controller: _descriptionController,
-          ),
-        ),
-      ],
-    );
-  }
-
-  /// Build date, time, and priority action buttons
-  Widget _buildActionButtons(ColorScheme colorScheme) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          TaskActionButton(
-            colorScheme: colorScheme,
-            onPressed: _selectDate,
-            child: Row(
-              children: [
-                const Icon(Icons.calendar_month),
-                const SizedBox(width: 8),
-                Text(DateTimeFormatter.formatDate(_formData.dueDate)),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          TaskActionButton(
-            colorScheme: colorScheme,
-            onPressed: _selectTime,
-            child: Row(
-              children: [
-                const Icon(Icons.alarm),
-                const SizedBox(width: 8),
-                Text(DateTimeFormatter.formatTime(_formData.dueTime)),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          TaskActionButton(
-            colorScheme: colorScheme,
-            onPressed: _showPriorityDialog,
-            child: PriorityFormatter.formatPriorityWidget(
-              _formData.priority,
-              colorScheme.primary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Build submit button
-  Widget _buildSubmitButton(ColorScheme colorScheme) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        TaskSubmitButton(colorScheme: colorScheme, onPressed: _handleSubmit),
-      ],
     );
   }
 }

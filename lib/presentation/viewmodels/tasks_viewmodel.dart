@@ -1,10 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_exercise1_todolist/core/utils/task_filters.dart';
 import 'package:flutter_exercise1_todolist/data/datasources/task_local_datasource.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 
 /// Controller class to handle tasks business logic and data management
 /// Separates business logic from UI for better maintainability
-class TasksController {
+class TasksViewModel extends ChangeNotifier {
   final TaskLocalDataSource _dataSource = TaskLocalDataSource();
 
   List<TaskEntity> _tasks = [];
@@ -25,6 +26,7 @@ class TasksController {
   /// Load tasks from data source
   Future<void> loadTasks() async {
     _tasks = await _dataSource.getTasks();
+    notifyListeners();
   }
 
   /// Toggle task completion status
@@ -35,11 +37,13 @@ class TasksController {
   /// Add a new task to the list
   void addTask(TaskEntity task) {
     _tasks.add(task);
+    notifyListeners();
   }
 
   /// Clear all completed tasks
   void clearCompleted() {
     _tasks.removeWhere((task) => _completedTasks[task.id] ?? task.isCompleted);
     _completedTasks.clear();
+    notifyListeners();
   }
 }

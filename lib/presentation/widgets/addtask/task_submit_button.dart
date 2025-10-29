@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 
 /// Circular submit button for the add task form
 class TaskSubmitButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final ColorScheme colorScheme;
-  final bool isEnabled;
 
   const TaskSubmitButton({
     super.key,
     required this.onPressed,
     required this.colorScheme,
-    this.isEnabled = true,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isEnabled = onPressed != null;
+
     return ElevatedButton.icon(
-      onPressed: isEnabled ? onPressed : null,
+      onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: colorScheme.primary,
         disabledBackgroundColor: colorScheme.primary.withAlpha(100),

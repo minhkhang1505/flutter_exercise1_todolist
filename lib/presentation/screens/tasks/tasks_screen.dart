@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/taskdetail/task_detail_screen.dart';
 import '../addtask/add_new_task_screen.dart';
-import '../../viewmodels/tasks_controller.dart';
+import '../../viewmodels/tasks_viewmodel.dart';
 import '../../widgets/tasks/tasks_app_bar.dart';
 import '../../widgets/tasks/tasks_tab_section.dart';
 import '../../widgets/tasks/tasks_floating_button.dart';
@@ -18,7 +18,7 @@ class TasksScreen extends StatefulWidget {
 class _TasksScreenState extends State<TasksScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  final _controller = TasksController();
+  final _viewModel = TasksViewModel();
 
   @override
   void initState() {
@@ -35,7 +35,7 @@ class _TasksScreenState extends State<TasksScreen>
 
   /// Load tasks from controller
   Future<void> _loadTasks() async {
-    await _controller.loadTasks();
+    await _viewModel.loadTasks();
     if (mounted) setState(() {});
   }
 
@@ -53,7 +53,7 @@ class _TasksScreenState extends State<TasksScreen>
   /// Toggle task completion status
   void _toggleTaskCompletion(int taskId, bool? value) {
     setState(() {
-      _controller.toggleTaskCompletion(taskId, value);
+      _viewModel.toggleTaskCompletion(taskId, value);
     });
   }
 
@@ -81,10 +81,10 @@ class _TasksScreenState extends State<TasksScreen>
           padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 16.0),
           child: TasksTabSection(
             tabController: _tabController,
-            allTasks: _controller.allTasks,
-            todayTasks: _controller.todayTasks,
-            upcomingTasks: _controller.upcomingTasks,
-            completedTasks: _controller.completedTasks,
+            allTasks: _viewModel.allTasks,
+            todayTasks: _viewModel.todayTasks,
+            upcomingTasks: _viewModel.upcomingTasks,
+            completedTasks: _viewModel.completedTasks,
             onTaskToggle: _toggleTaskCompletion,
             onTaskClicked: _onTaskClicked,
           ),

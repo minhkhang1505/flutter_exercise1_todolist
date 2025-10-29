@@ -9,7 +9,17 @@ class TaskLocalDataSource {
 
   factory TaskLocalDataSource() => _instance;
 
-  TaskLocalDataSource._internal();
+  final List<TaskEntity> _tasks = [];
+
+  TaskLocalDataSource._internal() {
+    debugPrint("🧱 TaskLocalDataSource instance created!");
+  }
+
+  void initialize() {
+    if (_tasks.isEmpty) {
+      _tasks.addAll(getSampleTasks());
+    }
+  }
 
   /// Get sample tasks for demonstration
   List<TaskEntity> getSampleTasks() {
@@ -84,6 +94,13 @@ class TaskLocalDataSource {
     ];
   }
 
+  /// Add a new task
+  Future<void> addTask(TaskEntity task) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    _tasks.add(task);
+    debugPrint("✅ Added task: ${task.title}, total now: ${_tasks.length}");
+  }
+
   Future<List<TaskEntity>> searchTasks(String query) async {
     final allTasks = getSampleTasks();
     return allTasks
@@ -108,12 +125,6 @@ class TaskLocalDataSource {
     await Future.delayed(const Duration(milliseconds: 100));
     final allTasks = getSampleTasks();
     return allTasks.firstWhere((task) => task.id == id);
-  }
-
-  /// Add a new task
-  Future<void> addTask(TaskEntity task) async {
-    // TODO: Implement actual storage
-    await Future.delayed(const Duration(milliseconds: 100));
   }
 
   /// Update an existing task
