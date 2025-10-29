@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../widgets/taskdetail/task_title_description_widget.dart';
+import '../../widgets/taskdetail/priority_widget.dart';
+import '../../widgets/taskdetail/date_selection_widget.dart';
+import '../../widgets/taskdetail/deadline_widget.dart';
+import '../../widgets/taskdetail/reminder_text_widget.dart';
+import '../../widgets/taskdetail/rename_dialog.dart';
+import '../../widgets/taskdetail/redescription_dialog.dart';
 
 class TaskDetailScreen extends StatefulWidget {
   const TaskDetailScreen({super.key});
@@ -21,86 +28,35 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     super.dispose();
   }
 
-  void showRenameDialog() {
+  void _showRenameDialog() {
     showDialog(
       context: context,
-      builder: (context) {
-        final TextEditingController renameController = TextEditingController(
-          text: _titleController.text,
-        );
-        return AlertDialog(
-          title: Text('Rename Task'),
-          content: TextField(
-            keyboardType: TextInputType.multiline,
-            minLines: 1,
-            maxLines: null,
-            expands: false,
-            controller: renameController,
-            decoration: InputDecoration(hintText: "Enter new task title"),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                // Handle rename logic here
-                setState(() {
-                  _titleController.text = renameController.text;
-                });
-                Navigator.of(context).pop();
-              },
-              child: Text('Save'),
-            ),
-          ],
-        );
-      },
+      builder: (context) => RenameDialog(
+        initialTitle: _titleController.text,
+        onSave: (newTitle) {
+          setState(() {
+            _titleController.text = newTitle;
+          });
+        },
+      ),
     );
   }
 
-  void showRedescriptionDialog() {
+  void _showRedescriptionDialog() {
     showDialog(
       context: context,
-      builder: (context) {
-        final TextEditingController redescriptionController =
-            TextEditingController(text: _descriptionController.text);
-        return AlertDialog(
-          title: Text('Redescription Task'),
-          content: TextField(
-            keyboardType: TextInputType.multiline,
-            minLines: 1,
-            maxLines: null,
-            expands: false,
-            controller: redescriptionController,
-            decoration: InputDecoration(hintText: "Enter new task description"),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                // Handle redescription logic here
-                setState(() {
-                  _descriptionController.text = redescriptionController.text;
-                });
-                Navigator.of(context).pop();
-              },
-              child: Text('Save'),
-            ),
-          ],
-        );
-      },
+      builder: (context) => RedescriptionDialog(
+        initialDescription: _descriptionController.text,
+        onSave: (newDescription) {
+          setState(() {
+            _descriptionController.text = newDescription;
+          });
+        },
+      ),
     );
   }
 
-  void _selectStartDate(BuildContext context) async {
+  void _selectStartDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedStartDate,
@@ -114,7 +70,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     }
   }
 
-  void _selectDueDate(BuildContext context) async {
+  void _selectDueDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDueDate,
@@ -128,7 +84,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     }
   }
 
-  void _selectTime(BuildContext context) async {
+  void _selectTime() async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: selectedTime,
@@ -142,7 +98,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         leading: Icon(Icons.arrow_back_ios),
@@ -151,9 +106,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             icon: Icon(Icons.more_horiz),
             onSelected: (value) {
               if (value == 'rename') {
-                showRenameDialog();
+                _showRenameDialog();
               } else if (value == 'redescription') {
-                showRedescriptionDialog();
+                _showRedescriptionDialog();
               }
             },
             itemBuilder: (context) => [
@@ -172,126 +127,26 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerLow,
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        keyboardType: TextInputType.multiline,
-                        minLines: 1,
-                        maxLines: null,
-                        expands: false,
-                        controller: _titleController,
-                        decoration: InputDecoration(
-                          hintText: "Text title",
-                          border: InputBorder.none,
-                        ),
-                        style: Theme.of(context).textTheme.headlineSmall,
-                        readOnly: true,
-                      ),
-                      TextField(
-                        keyboardType: TextInputType.multiline,
-                        minLines: 1,
-                        maxLines: null,
-                        expands: false,
-                        controller: _descriptionController,
-                        decoration: InputDecoration(
-                          hintText: "Task description goes here...",
-                          border: InputBorder.none,
-                        ),
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        readOnly: true,
-                      ),
-                    ],
-                  ),
+                TaskTitleDescriptionWidget(
+                  titleController: _titleController,
+                  descriptionController: _descriptionController,
                 ),
                 SizedBox(height: 24),
-                Row(
-                  children: [
-                    Icon(Icons.bookmark, color: colorScheme.primary),
-                    Text("Priority"),
-                  ],
+                PriorityWidget(),
+                SizedBox(height: 12),
+                DateSelectionWidget(
+                  selectedStartDate: selectedStartDate,
+                  selectedDueDate: selectedDueDate,
+                  onSelectStartDate: _selectStartDate,
+                  onSelectDueDate: _selectDueDate,
                 ),
                 SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerLow,
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Start Date",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            "Due Date",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ActionChip(
-                            onPressed: () => _selectStartDate(context),
-                            label: Text(
-                              "${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year}",
-                            ),
-                          ),
-                          Icon(Icons.arrow_right),
-                          ActionChip(
-                            onPressed: () => _selectDueDate(context),
-                            label: Text(
-                              "${selectedDueDate.day}/${selectedDueDate.month}/${selectedDueDate.year}",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                DeadlineWidget(
+                  selectedTime: selectedTime,
+                  selectedDueDate: selectedDueDate,
+                  onSelectTime: _selectTime,
                 ),
-                SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerLow,
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.alarm),
-                      SizedBox(width: 4),
-                      Text(
-                        "Deadline: ",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: () {
-                          _selectTime(context);
-                        },
-                        child: Text(
-                          "${selectedTime.hour}:${selectedTime.minute}, ${selectedDueDate.day}/${selectedDueDate.month}/${selectedDueDate.year}",
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Text(
-                  "The reminder is set default for 10 minutes before the due date",
-                  style: TextStyle(color: Colors.grey),
-                  softWrap: true,
-                ),
+                ReminderTextWidget(),
               ],
             ),
           ),
