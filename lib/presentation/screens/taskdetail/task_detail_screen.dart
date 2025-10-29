@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_exercise1_todolist/presentation/viewmodels/task_detail_viewmodel.dart';
 import '../../widgets/taskdetail/task_title_description_widget.dart';
 import '../../widgets/taskdetail/priority_widget.dart';
 import '../../widgets/taskdetail/date_selection_widget.dart';
@@ -21,6 +22,25 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   DateTime selectedStartDate = DateTime.now();
   DateTime selectedDueDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
+  late final TaskDetailViewModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = TaskDetailViewModel();
+
+    _loadTaskData();
+  }
+
+  Future<void> _loadTaskData() async {
+    await _viewModel.loadTask(widget.taskId);
+    if (mounted) {
+      setState(() {
+        _titleController.text = _viewModel.task.title;
+        _descriptionController.text = _viewModel.task.description;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -101,7 +121,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Icon(Icons.arrow_back_ios),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         actions: [
           PopupMenuButton<String>(
             icon: Icon(Icons.more_horiz),

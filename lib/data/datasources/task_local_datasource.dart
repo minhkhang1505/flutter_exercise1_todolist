@@ -87,6 +87,13 @@ class TaskLocalDataSource {
     return getSampleTasks();
   }
 
+  /// Get task by ID
+  Future<TaskEntity> getTaskById(int id) async {
+    await Future.delayed(const Duration(milliseconds: 100));
+    final allTasks = getSampleTasks();
+    return allTasks.firstWhere((task) => task.id == id);
+  }
+
   /// Add a new task
   Future<void> addTask(TaskEntity task) async {
     // TODO: Implement actual storage

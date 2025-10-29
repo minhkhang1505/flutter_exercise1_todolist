@@ -32,7 +32,11 @@ class TaskTitleDescriptionWidget extends StatelessWidget {
               hintText: "Text title",
               border: InputBorder.none,
             ),
-            style: Theme.of(context).textTheme.headlineSmall,
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurfaceVariant,
+            ),
             readOnly: true,
           ),
           TextField(
