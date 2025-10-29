@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/search/search_screen.dart';
+import 'package:flutter_exercise1_todolist/presentation/screens/taskdetail/task_detail_screen.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/tasks/tasks_screen.dart';
 import 'package:flutter_exercise1_todolist/themes/theme.dart';
 import 'package:flutter_exercise1_todolist/themes/util.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       title: 'Todo List',
       debugShowCheckedModeBanner: false,
       theme: brightness == Brightness.light ? theme.light() : theme.dark(),
-      home: const MainScreen(),
+      home: const TaskDetailScreen(),
     );
   }
 }
