@@ -12,12 +12,14 @@ class TaskLocalDataSource {
   final List<TaskEntity> _tasks = [];
 
   TaskLocalDataSource._internal() {
-    debugPrint("🧱 TaskLocalDataSource instance created!");
+    debugPrint("🧱 TaskLocalDataSource singleton instance created!");
+    _initializeData();
   }
 
-  void initialize() {
+  void _initializeData() {
     if (_tasks.isEmpty) {
       _tasks.addAll(getSampleTasks());
+      debugPrint("📦 Initialized with ${_tasks.length} sample tasks");
     }
   }
 
@@ -102,8 +104,7 @@ class TaskLocalDataSource {
   }
 
   Future<List<TaskEntity>> searchTasks(String query) async {
-    final allTasks = getSampleTasks();
-    return allTasks
+    return _tasks
         .where(
           (task) =>
               task.title.toLowerCase().contains(query.toLowerCase()) ||
@@ -117,14 +118,18 @@ class TaskLocalDataSource {
   Future<List<TaskEntity>> getTasks() async {
     // Simulate network delay
     await Future.delayed(const Duration(milliseconds: 100));
-    return getSampleTasks();
+    debugPrint("📋 Returning ${_tasks.length} tasks from singleton");
+    return List.from(_tasks); // Return a copy to prevent external modification
   }
 
   /// Get task by ID
   Future<TaskEntity> getTaskById(int id) async {
     await Future.delayed(const Duration(milliseconds: 100));
-    final allTasks = getSampleTasks();
-    return allTasks.firstWhere((task) => task.id == id);
+    try {
+      return _tasks.firstWhere((task) => task.id == id);
+    } catch (e) {
+      throw Exception('Task with id $id not found');
+    }
   }
 
   /// Update an existing task
