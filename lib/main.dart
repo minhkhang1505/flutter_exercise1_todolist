@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_exercise1_todolist/data/datasources/local/task_sqlite_datasource.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/search/search_screen.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/tasks/tasks_screen.dart';
 import 'package:flutter_exercise1_todolist/core/themes/theme.dart';
 import 'package:flutter_exercise1_todolist/core/themes/util.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await TaskSqliteDatasource().database;
   runApp(const MyApp());
 }
 

@@ -1,26 +1,33 @@
+import 'package:flutter_exercise1_todolist/data/datasources/local/task_sqlite_datasource.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 import 'package:flutter_exercise1_todolist/domain/repositories/repository.dart';
 import 'package:flutter_exercise1_todolist/data/datasources/task_local_datasource.dart';
 
 /// Implementation of TaskRepository for search functionality
 class TaskRepositoryImpl implements TaskRepository {
-  final TaskLocalDataSource _localDataSource;
+  //final TaskLocalDataSource _localDataSource;
+  final TaskSqliteDatasource _sqliteDatasource;
 
-  TaskRepositoryImpl({TaskLocalDataSource? localDataSource})
-    : _localDataSource = localDataSource ?? TaskLocalDataSource();
+  TaskRepositoryImpl({TaskSqliteDatasource? sqliteDatasource})
+    : _sqliteDatasource = sqliteDatasource ?? TaskSqliteDatasource();
 
   @override
   Future<List<TaskEntity>> searchTasks(String query) async {
-    return await _localDataSource.searchTasks(query);
+    return await _sqliteDatasource.searchTasks(query);
   }
 
   @override
   Future<TaskEntity> getTaskById(int id) async {
-    return await _localDataSource.getTaskById(id);
+    return await _sqliteDatasource.getTaskById(id);
   }
 
   @override
-  Future<void> addTask(TaskEntity task) async {
-    return await _localDataSource.addTask(task);
+  Future<int> addTask(TaskEntity task) async {
+    return await _sqliteDatasource.addTask(task);
+  }
+
+  @override
+  Future<List<TaskEntity>> getTasks() async {
+    return await _sqliteDatasource.getTasks();
   }
 }

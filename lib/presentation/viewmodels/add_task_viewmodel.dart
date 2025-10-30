@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/data/datasources/task_local_datasource.dart';
+import 'package:flutter_exercise1_todolist/data/repositories/repository_implement.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 import 'package:flutter_exercise1_todolist/core/enums/priority_type.dart';
 import '../models/add_task_form_data.dart';
 
 class AddTaskViewmodel extends ChangeNotifier {
-  final TaskLocalDataSource _dataSource = TaskLocalDataSource();
+  final TaskRepositoryImpl _dataSource = TaskRepositoryImpl();
 
   List<TaskEntity> _tasks = [];
 

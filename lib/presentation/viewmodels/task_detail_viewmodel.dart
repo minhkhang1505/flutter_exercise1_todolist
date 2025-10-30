@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/data/datasources/task_local_datasource.dart';
+import 'package:flutter_exercise1_todolist/data/repositories/repository_implement.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 import 'package:flutter_exercise1_todolist/domain/repositories/repository.dart';
 class TaskDetailViewModel extends ChangeNotifier {
-  final TaskLocalDataSource _dataSource = TaskLocalDataSource();
+  final TaskRepositoryImpl _dataSource = TaskRepositoryImpl();
   
   late TaskEntity _task;
 
