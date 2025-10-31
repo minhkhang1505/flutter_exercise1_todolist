@@ -99,7 +99,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen>
       Navigator.of(context).pop(true); // Return true to trigger reload
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to add task: {viewModel.error}')),
+        SnackBar(content: Text('Failed to add task: ${viewModel.error}')),
       );
     }
   }

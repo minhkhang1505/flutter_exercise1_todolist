@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     show UILocalNotificationDateInterpretation;
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/material.dart';
+
+import 'package:permission_handler/permission_handler.dart';
 
 class NotificationService {
   //create a singleton NotificationService
@@ -44,6 +48,26 @@ class NotificationService {
     required String description,
     required DateTime deadline,
   }) async {
+    if (Platform.isAndroid) {
+      final androidInfo = await _flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.areNotificationsEnabled();
+
+      if (androidInfo == false) {
+        debugPrint("🔕 Notifications are disabled by user");
+        return;
+      }
+
+      // Kiểm tra exact alarm permission (Android 12+)
+      if (await Permission.scheduleExactAlarm.isDenied) {
+        debugPrint("⚠️ Exact alarm permission is denied — requesting...");
+        await openAppSettings(); // yêu cầu user bật trong Settings
+        return;
+      }
+    }
+
     final scheduledTime = deadline.subtract(const Duration(minutes: 10));
 
     if (scheduledTime.isBefore(DateTime.now())) {
