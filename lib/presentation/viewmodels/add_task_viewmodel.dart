@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_exercise1_todolist/core/services/notification_service.dart';
 import 'package:flutter_exercise1_todolist/data/datasources/task_local_datasource.dart';
 import 'package:flutter_exercise1_todolist/data/repositories/repository_implement.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
@@ -6,7 +7,7 @@ import 'package:flutter_exercise1_todolist/core/enums/priority_type.dart';
 import '../models/add_task_form_data.dart';
 
 class AddTaskViewmodel extends ChangeNotifier {
-  final TaskRepositoryImpl _dataSource = TaskRepositoryImpl();
+  final TaskRepositoryImpl _repository = TaskRepositoryImpl();
 
   List<TaskEntity> _tasks = [];
 
@@ -27,9 +28,26 @@ class AddTaskViewmodel extends ChangeNotifier {
       final taskEntity = _convertFormDataToEntity(formData);
 
       // Add task through data source
-      await _dataSource.addTask(taskEntity);
+      await _repository.addTask(taskEntity);
 
-      _tasks = await _dataSource.getTasks();
+      // add reminder 10 minutes before deadline if dueDate and dueTime are set
+      if (taskEntity.dueDate != null && taskEntity.deadline != null) {
+        final deadline = DateTime(
+          taskEntity.dueDate!.year,
+          taskEntity.dueDate!.month,
+          taskEntity.dueDate!.day,
+          taskEntity.deadline!.hour,
+          taskEntity.deadline!.minute,
+        );
+
+        await NotificationService().scheduleDeadlineNotification(
+          id: 1,
+          title: taskEntity.title,
+          description: taskEntity.description,
+          deadline: deadline,
+        );
+      }
+      _tasks = await _repository.getTasks();
 
       for (var task in _tasks) {
         debugPrint("📝 Task: ${task.id} - ${task.title}");
