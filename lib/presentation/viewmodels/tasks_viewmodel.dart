@@ -8,8 +8,7 @@ import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 /// Separates business logic from UI for better maintainability
 class TasksViewModel extends ChangeNotifier {
   //final TaskLocalDataSource _dataSource = TaskLocalDataSource();
-final TaskRepositoryImpl _dataSource = TaskRepositoryImpl();
-
+  final TaskRepositoryImpl _dataSource = TaskRepositoryImpl();
 
   List<TaskEntity> _tasks = [];
   final Map<int, bool> _completedTasks = {};
@@ -49,4 +48,5 @@ final TaskRepositoryImpl _dataSource = TaskRepositoryImpl();
     _completedTasks.clear();
     notifyListeners();
   }
+
 }

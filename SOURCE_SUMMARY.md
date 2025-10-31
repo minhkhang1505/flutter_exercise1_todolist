@@ -227,3 +227,55 @@ This Flutter project follows Clean Architecture principles, separating concerns 
 ---
 
 **This plan will enhance user experience by providing timely reminders for task deadlines, improving task completion rates.**
+
+# Plan: Fix State Management in TasksScreen (UI Not Updating on Data Change)
+
+## **A. Problem Overview**
+
+- The `TasksScreen` currently creates its own instance of `TasksViewModel` and uses manual `setState` calls to update the UI after loading tasks or performing actions (add/delete).
+- This approach does **not** leverage the Provider/ChangeNotifier pattern, so UI updates are not reactive to changes in the underlying data (e.g., when a task is added or deleted elsewhere, or from another screen).
+- As a result, the UI may not update as expected when the data changes.
+
+## **B. Solution: Use Provider for State Management**
+
+### 1. **Refactor to Use Provider**
+
+    - Wrap the `TasksScreen` (or the app root) with a `ChangeNotifierProvider` for `TasksViewModel`.
+    - Remove the local instantiation of `TasksViewModel` in `_TasksScreenState`.
+    - Access the viewmodel using `Provider.of<TasksViewModel>(context)` or `Consumer<TasksViewModel>` in the widget tree.
+
+### 2. **Listen to Changes with Consumer/Selector**
+
+    - Use `Consumer<TasksViewModel>` or `Selector` to rebuild only the parts of the UI that depend on the task list.
+    - This ensures the UI automatically updates whenever `notifyListeners()` is called in the viewmodel (e.g., after add, delete, or toggle completion).
+
+### 3. **Update Data Mutations**
+
+    - Ensure all data mutations (add, delete, toggle completion) go through the viewmodel and call `notifyListeners()`.
+    - Remove manual `setState` calls in the screen; rely on Provider to trigger UI rebuilds.
+
+### 4. **Update Widget Tree**
+
+    - Pass the relevant task lists (`allTasks`, `todayTasks`, etc.) from the viewmodel via Provider to the UI widgets.
+    - Update callbacks (e.g., add, delete, toggle) to use the viewmodel from Provider.
+
+### 5. **Testing**
+
+    - Test adding, deleting, and toggling tasks from all entry points (including other screens) and verify the UI updates immediately.
+    - Test edge cases (e.g., deleting the last task, adding from a modal, etc.).
+
+## **C. Example Refactor Steps**
+
+1. In `main.dart` (or the relevant parent widget), wrap the app with `ChangeNotifierProvider(create: (_) => TasksViewModel())`.
+2. In `TasksScreen`, remove the local `_viewModel` and use `Provider.of<TasksViewModel>(context)` or `Consumer`.
+3. Replace all `setState` calls related to task data with viewmodel methods that call `notifyListeners()`.
+4. Use `Consumer<TasksViewModel>` to rebuild the task list UI when the data changes.
+5. Test thoroughly.
+
+## **D. Benefits**
+
+- The UI will always reflect the latest data, regardless of where changes occur.
+- Reduces manual state management and potential for bugs.
+- Follows best practices for scalable Flutter apps.
+
+---

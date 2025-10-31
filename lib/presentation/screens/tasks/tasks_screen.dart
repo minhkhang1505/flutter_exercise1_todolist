@@ -5,6 +5,7 @@ import '../../viewmodels/tasks_viewmodel.dart';
 import '../../widgets/tasks/tasks_app_bar.dart';
 import '../../widgets/tasks/tasks_tab_section.dart';
 import '../../widgets/tasks/tasks_floating_button.dart';
+import 'package:provider/provider.dart';
 
 /// Main screen for displaying and managing tasks
 /// Follows clean architecture with separated concerns
@@ -18,13 +19,11 @@ class TasksScreen extends StatefulWidget {
 class _TasksScreenState extends State<TasksScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
-  final _viewModel = TasksViewModel();
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _loadTasks();
   }
 
   @override
@@ -33,47 +32,39 @@ class _TasksScreenState extends State<TasksScreen>
     super.dispose();
   }
 
-  /// Load tasks from controller
-  Future<void> _loadTasks() async {
-    await _viewModel.loadTasks();
-    if (mounted) setState(() {});
-  }
-
   void _onTaskClicked(int taskId) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => TaskDetailScreen(taskId: taskId)),
-    ).then((value) {
-      if (value != null) {
-        _loadTasks();
+    ).then((value) async {
+      if (value == 'deleted' || value == 'updated') {
+        // Reload tasks after delete or update
+        await context.read<TasksViewModel>().loadTasks();
       }
     });
   }
 
-  /// Toggle task completion status
   void _toggleTaskCompletion(int taskId, bool? value) {
-    setState(() {
-      _viewModel.toggleTaskCompletion(taskId, value);
-    });
+    context.read<TasksViewModel>().toggleTaskCompletion(taskId, value);
   }
 
-  /// Handle add task action
   void _onAddTask() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (context) => const AddNewTaskScreen(),
-    ).then((result) {
-      // Reload tasks after adding new task
+    ).then((result) async {
       if (result != null) {
-        _loadTasks();
+        // Reload tasks after adding new task
+        await context.read<TasksViewModel>().loadTasks();
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final _viewModel = context.watch<TasksViewModel>();
     return Scaffold(
       appBar: const TasksAppBar(),
       body: SafeArea(
