@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_exercise1_todolist/core/services/notification_service.dart';
 import 'package:flutter_exercise1_todolist/data/datasources/local/task_sqlite_datasource.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/search/search_screen.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/tasks/tasks_screen.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_exercise1_todolist/core/themes/util.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await TaskSqliteDatasource().database;
+  await NotificationService().init();
   runApp(const MyApp());
 }
 
