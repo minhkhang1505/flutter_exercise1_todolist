@@ -7,6 +7,7 @@ import '../../widgets/taskdetail/deadline_widget.dart';
 import '../../widgets/taskdetail/reminder_text_widget.dart';
 import '../../widgets/taskdetail/rename_dialog.dart';
 import '../../widgets/taskdetail/redescription_dialog.dart';
+import 'package:provider/provider.dart';
 
 class TaskDetailScreen extends StatefulWidget {
   final int taskId;
@@ -16,33 +17,31 @@ class TaskDetailScreen extends StatefulWidget {
   State<TaskDetailScreen> createState() => _TaskDetailScreenState();
 }
 
-class _TaskDetailScreenState extends State<TaskDetailScreen> {
+class _TaskDetailScreenState extends State<TaskDetailScreen>
+    with TickerProviderStateMixin {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   DateTime? selectedStartDate;
   DateTime? selectedDueDate;
   TimeOfDay? selectedTime;
-  late final TaskDetailViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = TaskDetailViewModel();
-
-    _loadTaskData();
-  }
-
-  Future<void> _loadTaskData() async {
-    await _viewModel.loadTask(widget.taskId);
-    if (mounted) {
-      setState(() {
-        _titleController.text = _viewModel.task.title;
-        _descriptionController.text = _viewModel.task.description;
-        selectedStartDate = _viewModel.task.startDate;
-        selectedDueDate = _viewModel.task.dueDate;
-        selectedTime = _viewModel.task.deadline;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<TaskDetailViewModel>().loadTask(widget.taskId).then((_) {
+        final task = context.read<TaskDetailViewModel>().task;
+        if (mounted) {
+          setState(() {
+            _titleController.text = task.title;
+            _descriptionController.text = task.description;
+            selectedStartDate = task.startDate;
+            selectedDueDate = task.dueDate;
+            selectedTime = task.deadline;
+          });
+        }
       });
-    }
+    });
   }
 
   @override
@@ -121,9 +120,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   }
 
   void _deleteTask() async {
-    await _viewModel.onDeleteTaskButtonPressed(widget.taskId);
+    await context.read<TaskDetailViewModel>().onDeleteTaskButtonPressed(
+      widget.taskId,
+    );
     if (mounted) {
-      Navigator.pop(context);
+      Navigator.pop(
+        context,
+        'deleted',
+      ); // Return 'deleted' to trigger parent reload
     }
   }
 

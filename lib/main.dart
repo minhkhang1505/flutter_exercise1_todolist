@@ -5,6 +5,7 @@ import 'package:flutter_exercise1_todolist/presentation/screens/search/search_sc
 import 'package:flutter_exercise1_todolist/presentation/screens/tasks/tasks_screen.dart';
 import 'package:flutter_exercise1_todolist/core/themes/theme.dart';
 import 'package:flutter_exercise1_todolist/core/themes/util.dart';
+import 'package:flutter_exercise1_todolist/presentation/viewmodels/add_task_viewmodel.dart';
 import 'package:flutter_exercise1_todolist/presentation/viewmodels/task_detail_viewmodel.dart';
 import 'package:flutter_exercise1_todolist/presentation/viewmodels/tasks_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => TasksViewModel()..loadTasks()),
         ChangeNotifierProvider(create: (_) => TaskDetailViewModel()),
+        ChangeNotifierProvider(create: (_) => AddTaskViewmodel()),
       ],
       child: const MyApp(),
     ),
