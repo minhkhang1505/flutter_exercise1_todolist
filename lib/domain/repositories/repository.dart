@@ -4,6 +4,7 @@ import '../entities/task.dart';
 abstract class TaskRepository {
   Future<List<TaskEntity>> searchTasks(String query);
   Future<TaskEntity> getTaskById(int id);
-  Future<void> addTask(TaskEntity task);
+  Future<int> addTask(TaskEntity task);
   Future<List<TaskEntity>> getTasks();
+  Future<void> deleteTask(int id);
 }

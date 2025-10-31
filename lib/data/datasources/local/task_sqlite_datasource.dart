@@ -42,9 +42,8 @@ class TaskSqliteDatasource {
 ''');
   }
 
-  Map<String, dynamic> _toMap(TaskEntity task) {
-    return {
-      'id': task.id,
+  Map<String, dynamic> _toMap(TaskEntity task, {bool includeId = true}) {
+    final map = {
       'title': task.title,
       'description': task.description,
       'due_date': task.dueDate?.toIso8601String(),
@@ -54,6 +53,10 @@ class TaskSqliteDatasource {
       'priority': task.priorityType?.name,
       'is_completed': task.isCompleted ? 1 : 0,
     };
+    if (includeId) {
+      map['id'] = task.id;
+    }
+    return map;
   }
 
   TaskEntity _fromMap(Map<String, dynamic> map) {
@@ -65,7 +68,7 @@ class TaskSqliteDatasource {
       startDate: map['start_date'] != null
           ? DateTime.parse(map['start_date'])
           : null,
-      deadline: map['dealine_hour'] != null && map['deadline_minute'] != null
+      deadline: map['deadline_hour'] != null && map['deadline_minute'] != null
           ? TimeOfDay(
               hour: map['deadline_hour'] as int,
               minute: map['deadline_minute'] as int,
@@ -82,7 +85,7 @@ class TaskSqliteDatasource {
 
   Future<int> addTask(TaskEntity task) async {
     final db = await database;
-    return await db.insert('tasks', _toMap(task));
+    return await db.insert('tasks', _toMap(task, includeId: false));
   }
 
   Future<List<TaskEntity>> getTasks() async {
@@ -105,5 +108,10 @@ class TaskSqliteDatasource {
       whereArgs: ['%$query%', '%$query%'],
     );
     return maps.map(_fromMap).toList();
+  }
+
+  Future<void> deleteTask(int id) async {
+    final db = await database;
+    await db.delete('tasks', where: 'id = ?', whereArgs: [id]);
   }
 }

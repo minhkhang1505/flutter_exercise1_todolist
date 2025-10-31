@@ -1,7 +1,6 @@
 import 'package:flutter_exercise1_todolist/data/datasources/local/task_sqlite_datasource.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 import 'package:flutter_exercise1_todolist/domain/repositories/repository.dart';
-import 'package:flutter_exercise1_todolist/data/datasources/task_local_datasource.dart';
 
 /// Implementation of TaskRepository for search functionality
 class TaskRepositoryImpl implements TaskRepository {
@@ -29,5 +28,10 @@ class TaskRepositoryImpl implements TaskRepository {
   @override
   Future<List<TaskEntity>> getTasks() async {
     return await _sqliteDatasource.getTasks();
+  }
+
+  @override
+  Future<void> deleteTask(int id) async {
+    return await _sqliteDatasource.deleteTask(id);
   }
 }

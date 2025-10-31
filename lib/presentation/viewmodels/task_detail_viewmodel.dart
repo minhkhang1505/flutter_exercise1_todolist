@@ -18,4 +18,9 @@ class TaskDetailViewModel extends ChangeNotifier {
   void onAddTaskButtonPressed() {
     // Implement the logic to handle adding or updating a task
   }
+
+  Future<void> onDeleteTaskButtonPressed(int taskId) async {
+    await _dataSource.deleteTask(taskId);
+    notifyListeners();
+  }
 }

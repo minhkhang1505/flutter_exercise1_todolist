@@ -120,6 +120,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     }
   }
 
+  void _deleteTask() async {
+    await _viewModel.onDeleteTaskButtonPressed(widget.taskId);
+    if (mounted) {
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -176,6 +183,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                   onSelectTime: _selectTime,
                 ),
                 ReminderTextWidget(),
+                SizedBox(height: 24),
+                ElevatedButton(onPressed: _deleteTask, child: Text("Delete")),
               ],
             ),
           ),
