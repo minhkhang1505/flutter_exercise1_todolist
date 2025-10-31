@@ -6,10 +6,11 @@ class TaskEntity {
   final int id;
   final String title;
   final String description;
+  final bool isCompleted;
+  // Nullable fields
   final DateTime? dueDate;
   final DateTime? startDate;
   final TimeOfDay? deadline;
-  final bool isCompleted;
   final PriorityType? priorityType;
 
   TaskEntity({

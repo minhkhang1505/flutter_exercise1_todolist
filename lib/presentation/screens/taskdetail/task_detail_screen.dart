@@ -19,9 +19,9 @@ class TaskDetailScreen extends StatefulWidget {
 class _TaskDetailScreenState extends State<TaskDetailScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  DateTime? selectedStartDate = DateTime.now();
-  DateTime? selectedDueDate = DateTime.now();
-  TimeOfDay? selectedTime = TimeOfDay.now();
+  DateTime? selectedStartDate;
+  DateTime? selectedDueDate;
+  TimeOfDay? selectedTime;
   late final TaskDetailViewModel _viewModel;
 
   @override
@@ -38,7 +38,9 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       setState(() {
         _titleController.text = _viewModel.task.title;
         _descriptionController.text = _viewModel.task.description;
+        selectedStartDate = _viewModel.task.startDate;
         selectedDueDate = _viewModel.task.dueDate;
+        selectedTime = _viewModel.task.deadline;
       });
     }
   }
