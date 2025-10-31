@@ -34,7 +34,7 @@ class NotificationService {
   }
 
   static void _onNotificationTapped(NotificationResponse response) {
-    debugPrint("🔔 Notification tapped: ${response.payload}");
+    debugPrint("Notification tapped: ${response.payload}");
     // Handle navigation or actions based on notification payload
   }
 
