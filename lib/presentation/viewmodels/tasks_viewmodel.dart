@@ -3,10 +3,7 @@ import 'package:flutter_exercise1_todolist/core/utils/task_filters.dart';
 import 'package:flutter_exercise1_todolist/data/repositories/repository_implement.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 
-/// Controller class to handle tasks business logic and data management
-/// Separates business logic from UI for better maintainability
 class TasksViewModel extends ChangeNotifier {
-
   //final TaskLocalDataSource _dataSource = TaskLocalDataSource();
   final TaskRepositoryImpl _dataSource = TaskRepositoryImpl();
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 import 'package:flutter_exercise1_todolist/presentation/widgets/tasks/task_item.dart';
+import 'package:flutter_svg/svg.dart';
 
 /// Reusable list view widget for displaying tasks
 class TaskListView extends StatelessWidget {
@@ -20,7 +21,7 @@ class TaskListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (tasks.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(context);
     }
 
     return ListView.builder(
@@ -38,18 +39,22 @@ class TaskListView extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
-    return const Center(
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.check_circle_outline, size: 64, color: Colors.grey),
+          SvgPicture.asset(
+            'assets/icons/ic_calendar.svg',
+            width: 80,
+            height: 80,
+          ),
           SizedBox(height: 16),
           Text(
             'No tasks found',
             style: TextStyle(
               fontSize: 18,
-              color: Colors.grey,
+              color: Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w500,
             ),
           ),
