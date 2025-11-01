@@ -144,7 +144,16 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
         ),
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(Icons.more_horiz),
+            icon: Icon(
+              Icons.more_horiz,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            color: Theme.of(context).colorScheme.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 8,
+            offset: const Offset(0, 20),
             onSelected: (value) {
               if (value == 'rename') {
                 _showRenameDialog();
@@ -153,10 +162,27 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
               }
             },
             itemBuilder: (context) => [
-              PopupMenuItem(value: 'rename', child: Text('Rename')),
+              PopupMenuItem(
+                value: 'rename',
+                child: Row(
+                  children: [
+                    Text(
+                      'Rename',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
+              ),
               PopupMenuItem(
                 value: 'redescription',
-                child: Text('Redescription'),
+                child: Row(
+                  children: [
+                    Text(
+                      'Redescription',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -172,8 +198,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
                   titleController: _titleController,
                   descriptionController: _descriptionController,
                 ),
-                SizedBox(height: 24),
-                PriorityWidget(),
+
                 SizedBox(height: 12),
                 DateSelectionWidget(
                   selectedStartDate: selectedStartDate,
@@ -188,6 +213,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
                   onSelectTime: _selectTime,
                 ),
                 ReminderTextWidget(),
+                SizedBox(height: 12),
+                PriorityWidget(),
                 SizedBox(height: 24),
                 DangerButton(label: 'Delete', onPressed: _deleteTask),
               ],

@@ -4,7 +4,7 @@ import 'package:flutter_exercise1_todolist/core/utils/task_filters.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 
 /// Widget representing a single task item in the list
-class TaskItem extends StatelessWidget {
+class TaskItem extends StatefulWidget {
   final TaskEntity task;
   final bool isCompleted;
   final Function(bool?) onChanged;
@@ -18,6 +18,11 @@ class TaskItem extends StatelessWidget {
     required this.onTaskClicked,
   });
 
+  @override
+  State<TaskItem> createState() => _TaskItemState();
+}
+
+class _TaskItemState extends State<TaskItem> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -35,11 +40,11 @@ class TaskItem extends StatelessWidget {
           _buildCheckbox(),
           Expanded(
             child: GestureDetector(
-              onTap: () => onTaskClicked(task.id),
+              onTap: () => widget.onTaskClicked(widget.task.id),
               child: _buildTaskContent(colorScheme),
             ),
           ),
-          if (task.priorityType != null && !task.isCompleted)
+          if (widget.task.priorityType != null && !widget.task.isCompleted)
             _buildPriorityIcon(),
         ],
       ),
@@ -47,7 +52,7 @@ class TaskItem extends StatelessWidget {
   }
 
   Widget _buildCheckbox() {
-    return Checkbox(value: isCompleted, onChanged: onChanged);
+    return Checkbox(value: widget.isCompleted, onChanged: widget.onChanged);
   }
 
   Widget _buildTaskContent(ColorScheme colorScheme) {
@@ -63,34 +68,34 @@ class TaskItem extends StatelessWidget {
 
   Widget _buildTitle(ColorScheme colorScheme) {
     return Text(
-      task.title,
+      widget.task.title,
       style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.bold,
-        decoration: isCompleted ? TextDecoration.lineThrough : null,
-        color: isCompleted ? colorScheme.onSurfaceVariant : null,
+        decoration: widget.isCompleted ? TextDecoration.lineThrough : null,
+        color: widget.isCompleted ? colorScheme.onSurfaceVariant : null,
       ),
     );
   }
 
   Widget _buildDescription(ColorScheme colorScheme) {
     return Text(
-      task.description,
+      widget.task.description,
       style: TextStyle(
         fontSize: 14,
         color: colorScheme.onSurfaceVariant.withAlpha(150),
-        decoration: isCompleted ? TextDecoration.lineThrough : null,
+        decoration: widget.isCompleted ? TextDecoration.lineThrough : null,
       ),
     );
   }
 
   Widget _buildDueDate() {
-    if (task.dueDate == null) {
+    if (widget.task.dueDate == null) {
       return const SizedBox.shrink();
     }
 
     // If completed, always show completed label
-    if (task.isCompleted) {
+    if (widget.task.isCompleted) {
       return Column(
         children: [
           const SizedBox(height: 8),
@@ -99,7 +104,7 @@ class TaskItem extends StatelessWidget {
       );
     }
 
-    final dueDate = task.dueDate!;
+    final dueDate = widget.task.dueDate!;
 
     // Check for today
     if (TaskFilters.isSameDay(dueDate, DayCategory.today.date)) {
@@ -145,6 +150,6 @@ class TaskItem extends StatelessWidget {
   }
 
   Widget _buildPriorityIcon() {
-    return Icon(Icons.bookmark, color: task.priorityType?.color.withAlpha(200));
+    return Icon(Icons.bookmark, color: widget.task.priorityType?.color.withAlpha(200));
   }
 }

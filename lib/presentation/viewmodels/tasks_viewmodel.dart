@@ -33,6 +33,7 @@ class TasksViewModel extends ChangeNotifier {
   /// Toggle task completion status
   void toggleTaskCompletion(int taskId, bool? value) {
     _completedTasks[taskId] = value ?? false;
+    notifyListeners();
   }
 
   /// Add a new task to the list
@@ -47,5 +48,4 @@ class TasksViewModel extends ChangeNotifier {
     _completedTasks.clear();
     notifyListeners();
   }
-
 }
