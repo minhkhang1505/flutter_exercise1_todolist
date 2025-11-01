@@ -30,19 +30,27 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<TaskDetailViewModel>().loadTask(widget.taskId).then((_) {
-        final task = context.read<TaskDetailViewModel>().task;
-        if (mounted) {
-          setState(() {
-            _titleController.text = task.title;
-            _descriptionController.text = task.description;
-            selectedStartDate = task.startDate;
-            selectedDueDate = task.dueDate;
-            selectedTime = task.deadline;
-          });
-        }
-      });
+      context.read<TaskDetailViewModel>().loadTask(widget.taskId);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final viewModel = context.watch<TaskDetailViewModel>();
+    final task = viewModel.task;
+    if (task != null) {
+      // Only update controllers if the value is different to avoid cursor jumps
+      if (_titleController.text != task.title) {
+        _titleController.text = task.title;
+      }
+      if (_descriptionController.text != task.description) {
+        _descriptionController.text = task.description;
+      }
+      selectedStartDate = task.startDate;
+      selectedDueDate = task.dueDate;
+      selectedTime = task.deadline;
+    }
   }
 
   @override
@@ -58,9 +66,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
       builder: (context) => RenameDialog(
         initialTitle: _titleController.text,
         onSave: (newTitle) {
-          setState(() {
-            _titleController.text = newTitle;
-          });
+          final viewModel = context.read<TaskDetailViewModel>();
+          if (viewModel.task != null) {
+            viewModel.updateTask(viewModel.task!.copyWith(title: newTitle));
+          }
         },
       ),
     );
@@ -72,9 +81,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
       builder: (context) => RedescriptionDialog(
         initialDescription: _descriptionController.text,
         onSave: (newDescription) {
-          setState(() {
-            _descriptionController.text = newDescription;
-          });
+          final viewModel = context.read<TaskDetailViewModel>();
+          if (viewModel.task != null) {
+            viewModel.updateTask(
+              viewModel.task!.copyWith(description: newDescription),
+            );
+          }
         },
       ),
     );
@@ -88,9 +100,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != selectedStartDate) {
-      setState(() {
-        selectedStartDate = picked;
-      });
+      final viewModel = context.read<TaskDetailViewModel>();
+      if (viewModel.task != null) {
+        viewModel.updateTask(viewModel.task!.copyWith(startDate: picked));
+      }
     }
   }
 
@@ -102,9 +115,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != selectedDueDate) {
-      setState(() {
-        selectedDueDate = picked;
-      });
+      final viewModel = context.read<TaskDetailViewModel>();
+      if (viewModel.task != null) {
+        viewModel.updateTask(viewModel.task!.copyWith(dueDate: picked));
+      }
     }
   }
 
@@ -114,9 +128,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
       initialTime: selectedTime ?? TimeOfDay.now(),
     );
     if (picked != null && picked != selectedTime) {
-      setState(() {
-        selectedTime = picked;
-      });
+      final viewModel = context.read<TaskDetailViewModel>();
+      if (viewModel.task != null) {
+        viewModel.updateTask(viewModel.task!.copyWith(deadline: picked));
+      }
     }
   }
 
@@ -134,6 +149,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<TaskDetailViewModel>();
+    if (viewModel.isLoading || viewModel.task == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(

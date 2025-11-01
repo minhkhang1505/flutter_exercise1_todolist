@@ -37,10 +37,8 @@ class _TasksScreenState extends State<TasksScreen>
       context,
       MaterialPageRoute(builder: (context) => TaskDetailScreen(taskId: taskId)),
     ).then((value) async {
-      if (value == 'deleted' || value == 'updated') {
-        // Reload tasks after delete or update
-        await context.read<TasksViewModel>().loadTasks();
-      }
+      // Reload tasks after any change (delete, update, or just back)
+      await context.read<TasksViewModel>().loadTasks();
     });
   }
 

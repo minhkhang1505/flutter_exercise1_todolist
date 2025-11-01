@@ -5,12 +5,17 @@ import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 class TaskDetailViewModel extends ChangeNotifier {
   final TaskRepositoryImpl _dataSource = TaskRepositoryImpl();
 
-  late TaskEntity _task;
+  TaskEntity? _task;
+  bool _isLoading = false;
 
-  TaskEntity get task => _task;
+  TaskEntity? get task => _task;
+  bool get isLoading => _isLoading;
 
   Future<void> loadTask(int taskId) async {
+    _isLoading = true;
+    notifyListeners();
     _task = await _dataSource.getTaskById(taskId);
+    _isLoading = false;
     notifyListeners();
   }
 
