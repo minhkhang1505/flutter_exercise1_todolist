@@ -5,7 +5,7 @@ import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 import 'package:flutter_exercise1_todolist/core/enums/priority_type.dart';
 import '../models/add_task_form_data.dart';
 
-class AddTaskViewmodel extends ChangeNotifier {
+class AddTaskViewModel extends ChangeNotifier {
   final TaskRepositoryImpl _repository = TaskRepositoryImpl();
 
   List<TaskEntity> _tasks = [];

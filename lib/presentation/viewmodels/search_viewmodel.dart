@@ -1,16 +1,17 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 import 'package:flutter_exercise1_todolist/domain/usecases/search_tasks_usecase.dart';
 
 /// Controller for search functionality
 /// Uses SearchTasksUseCase following Clean Architecture
-class SearchController {
+class SearchViewModel extends ChangeNotifier {
   final SearchTasksUseCase _searchTasksUseCase;
 
   List<TaskEntity> _searchResults = [];
   bool _isLoading = false;
   String _lastQuery = '';
 
-  SearchController({required SearchTasksUseCase searchTasksUseCase})
+  SearchViewModel({required SearchTasksUseCase searchTasksUseCase})
     : _searchTasksUseCase = searchTasksUseCase;
 
   /// Get current search results

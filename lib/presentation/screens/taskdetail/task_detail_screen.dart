@@ -7,6 +7,7 @@ import '../../widgets/taskdetail/deadline_widget.dart';
 import '../../widgets/taskdetail/reminder_text_widget.dart';
 import '../../widgets/taskdetail/rename_dialog.dart';
 import '../../widgets/taskdetail/redescription_dialog.dart';
+import '../../widgets/taskdetail/danger_button.dart';
 import 'package:provider/provider.dart';
 
 class TaskDetailScreen extends StatefulWidget {
@@ -188,7 +189,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen>
                 ),
                 ReminderTextWidget(),
                 SizedBox(height: 24),
-                ElevatedButton(onPressed: _deleteTask, child: Text("Delete")),
+                DangerButton(label: 'Delete', onPressed: _deleteTask),
               ],
             ),
           ),

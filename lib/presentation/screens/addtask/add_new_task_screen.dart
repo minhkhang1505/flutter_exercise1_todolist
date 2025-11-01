@@ -69,7 +69,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen>
   }
 
   Future<void> _handleSubmit() async {
-    final viewModel = context.read<AddTaskViewmodel>();
+    final viewModel = context.read<AddTaskViewModel>();
     _formData.title = _titleController.text;
     _formData.description = _descriptionController.text;
 
@@ -106,7 +106,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen>
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<AddTaskViewmodel>();
+    final viewModel = context.watch<AddTaskViewModel>();
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(

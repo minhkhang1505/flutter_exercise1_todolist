@@ -1,15 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_exercise1_todolist/data/repositories/repository_implement.dart';
-import 'package:flutter_exercise1_todolist/domain/usecases/search_tasks_usecase.dart';
-import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 import 'package:flutter_exercise1_todolist/presentation/screens/taskdetail/task_detail_screen.dart';
-import '../../viewmodels/search_controller.dart' as search_ctrl;
+import '../../viewmodels/search_viewmodel.dart' as search_ctrl;
 import '../../widgets/search/search_app_bar.dart';
 import '../../widgets/search/search_bar_widget.dart';
 import '../../widgets/search/search_suggestions_widget.dart';
 import '../../widgets/search/search_results_widget.dart';
+import 'package:provider/provider.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -18,24 +16,17 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
-  final TextEditingController _searchController = TextEditingController();
+class _SearchScreenState extends State<SearchScreen>
+    with TickerProviderStateMixin {
   final FocusNode _searchFocusNode = FocusNode();
+  final TextEditingController _searchController = TextEditingController();
   bool _isSearchFocused = false;
   Timer? _debounce;
-  late search_ctrl.SearchController _controller;
-  List<TaskEntity> _searchResults = [];
 
   @override
   void initState() {
     super.initState();
     _searchFocusNode.addListener(_onFocusChange);
-
-    // Initialize search controller with use case
-    final repository = TaskRepositoryImpl();
-    _controller = search_ctrl.SearchController(
-      searchTasksUseCase: SearchTasksUseCase(repository),
-    );
   }
 
   @override
@@ -55,10 +46,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _clearSearch() {
     _searchController.clear();
-    _controller.clearSearch();
-    setState(() {
-      _searchResults = [];
-    });
+    context.read<search_ctrl.SearchViewModel>().clearSearch();
+    setState(() {});
   }
 
   void _handleSuggestionTap(String text) {
@@ -73,7 +62,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _onSearchChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
-
     _debounce = Timer(const Duration(seconds: 1), () {
       _performSearch(query);
     });
@@ -81,16 +69,12 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> _performSearch(String query) async {
     if (query.trim().isEmpty) {
-      setState(() {
-        _searchResults = [];
-      });
+      context.read<search_ctrl.SearchViewModel>().clearSearch();
+      setState(() {});
       return;
     }
-
-    await _controller.searchTasks(query);
-    setState(() {
-      _searchResults = _controller.searchResults;
-    });
+    await context.read<search_ctrl.SearchViewModel>().searchTasks(query);
+    setState(() {});
   }
 
   void _onTaskClicked(int taskId) {
@@ -106,6 +90,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = context.watch<search_ctrl.SearchViewModel>();
     final hasQuery = _searchController.text.trim().isNotEmpty;
     return Scaffold(
       appBar: _isSearchFocused ? null : const SearchAppBar(),
@@ -124,8 +109,8 @@ class _SearchScreenState extends State<SearchScreen> {
               child: hasQuery
                   ? SearchResultsWidget(
                       searchQuery: _searchController.text,
-                      searchResults: _searchResults,
-                      isLoading: _controller.isLoading,
+                      searchResults: viewModel.searchResults,
+                      isLoading: viewModel.isLoading,
                       onTaskClicked: _onTaskClicked,
                     )
                   : (_isSearchFocused
@@ -135,8 +120,8 @@ class _SearchScreenState extends State<SearchScreen> {
                           )
                         : SearchResultsWidget(
                             searchQuery: _searchController.text,
-                            searchResults: _searchResults,
-                            isLoading: _controller.isLoading,
+                            searchResults: viewModel.searchResults,
+                            isLoading: viewModel.isLoading,
                             onTaskClicked: _onTaskClicked,
                           )),
             ),
