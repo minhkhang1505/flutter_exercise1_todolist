@@ -45,7 +45,31 @@ class _TasksScreenState extends State<TasksScreen>
   }
 
   void _toggleTaskCompletion(int taskId, bool? value) {
-    context.read<TasksViewModel>().toggleTaskCompletion(taskId, value);
+    final viewModel = context.read<TasksViewModel>();
+    final prevValue = viewModel.completedTasks[taskId] ?? false;
+    viewModel.toggleTaskCompletion(taskId, value);
+    // Show snackbar only when marking as complete
+    if ((value ?? false) && !prevValue) {
+      bool undoPressed = false;
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      final snackBar = SnackBar(
+        content: const Text('Task marked as complete'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            undoPressed = true;
+            viewModel.toggleTaskCompletion(taskId, false);
+          },
+        ),
+        duration: const Duration(seconds: 3),
+      );
+      final controller = ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      controller.closed.then((reason) async {
+        if (!undoPressed) {
+          await viewModel.deleteTask(taskId);
+        }
+      });
+    }
   }
 
   void _onAddTask() {

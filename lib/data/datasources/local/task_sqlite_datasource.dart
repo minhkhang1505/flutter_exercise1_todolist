@@ -114,4 +114,14 @@ class TaskSqliteDatasource {
     final db = await database;
     await db.delete('tasks', where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<void> updateTask(TaskEntity task) async {
+    final db = await database;
+    await db.update(
+      'tasks',
+      _toMap(task, includeId: false),
+      where: 'id = ?',
+      whereArgs: [task.id],
+    );
+  }
 }

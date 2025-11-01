@@ -34,4 +34,16 @@ class TaskRepositoryImpl implements TaskRepository {
   Future<void> deleteTask(int id) async {
     return await _sqliteDatasource.deleteTask(id);
   }
+
+  @override
+  Future<void> updateTask(TaskEntity task) async {
+    return await _sqliteDatasource.updateTask(task);
+  }
+
+  @override
+  Future<void> completeTask(int id) async {
+    TaskEntity task = await _sqliteDatasource.getTaskById(id);
+    TaskEntity updatedTask = task.copyWith(isCompleted: true);
+    await _sqliteDatasource.updateTask(updatedTask);
+  }
 }

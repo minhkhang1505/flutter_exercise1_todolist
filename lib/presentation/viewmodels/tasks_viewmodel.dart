@@ -6,6 +6,7 @@ import 'package:flutter_exercise1_todolist/domain/entities/task.dart';
 /// Controller class to handle tasks business logic and data management
 /// Separates business logic from UI for better maintainability
 class TasksViewModel extends ChangeNotifier {
+
   //final TaskLocalDataSource _dataSource = TaskLocalDataSource();
   final TaskRepositoryImpl _dataSource = TaskRepositoryImpl();
 
@@ -33,6 +34,7 @@ class TasksViewModel extends ChangeNotifier {
   /// Toggle task completion status
   void toggleTaskCompletion(int taskId, bool? value) {
     _completedTasks[taskId] = value ?? false;
+    _dataSource.completeTask(taskId);
     notifyListeners();
   }
 
@@ -46,6 +48,14 @@ class TasksViewModel extends ChangeNotifier {
   void clearCompleted() {
     _tasks.removeWhere((task) => _completedTasks[task.id] ?? task.isCompleted);
     _completedTasks.clear();
+    notifyListeners();
+  }
+
+  /// Delete a task by id
+  Future<void> deleteTask(int taskId) async {
+    await _dataSource.deleteTask(taskId);
+    _tasks.removeWhere((task) => task.id == taskId);
+    _completedTasks.remove(taskId);
     notifyListeners();
   }
 }
