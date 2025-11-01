@@ -83,9 +83,9 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen>
     }
 
     if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Adding task...')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Adding task and setup notification...')),
+      );
     }
 
     final success = await viewModel.addNewTask(_formData);
@@ -93,9 +93,11 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen>
     if (!mounted) return;
 
     if (success) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Task added successfully!')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Task is added and setup notification successfully!'),
+        ),
+      );
       Navigator.of(context).pop(true); // Return true to trigger reload
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -1,13 +1,14 @@
 import 'dart:io';
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     show UILocalNotificationDateInterpretation;
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter/material.dart';
-
 import 'package:permission_handler/permission_handler.dart';
+
+typedef NotificationTapCallback = void Function(String taskId);
+
 
 class NotificationService {
   //create a singleton NotificationService
@@ -18,8 +19,12 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  Future<void> init() async {
+  NotificationTapCallback? onNotificationTap;
+
+  Future<void> init({NotificationTapCallback? onTap}) async {
     tz.initializeTimeZones();
+
+    onNotificationTap = onTap;
 
     const AndroidInitializationSettings androidSetting =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -56,13 +61,11 @@ class NotificationService {
           ?.areNotificationsEnabled();
 
       if (androidInfo == false) {
-        debugPrint("🔕 Notifications are disabled by user");
         return;
       }
 
       // Kiểm tra exact alarm permission (Android 12+)
       if (await Permission.scheduleExactAlarm.isDenied) {
-        debugPrint("⚠️ Exact alarm permission is denied — requesting...");
         await openAppSettings(); // yêu cầu user bật trong Settings
         return;
       }
@@ -92,6 +95,7 @@ class NotificationService {
         iOS: DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      payload: id.toString(),
     );
   }
 

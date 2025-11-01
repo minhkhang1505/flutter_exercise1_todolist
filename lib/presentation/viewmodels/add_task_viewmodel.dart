@@ -23,25 +23,11 @@ class AddTaskViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      //debug
-      debugPrint("🚀 [START] Adding new task...");
-      debugPrint("📋 Raw formData: ${formData.toString()}");
-
       // Convert form data to TaskEntity
       final taskEntity = _convertFormDataToEntity(formData);
 
-      //debug
-      debugPrint("✅ [CONVERTED] TaskEntity created:");
-      debugPrint("   🆔 id: ${taskEntity.id}");
-      debugPrint("   🏷️ title: ${taskEntity.title}");
-      debugPrint("   🗒️ description: ${taskEntity.description}");
-      debugPrint("   📅 dueDate: ${taskEntity.dueDate}");
-      debugPrint("   ⏰ deadline: ${taskEntity.deadline}");
-      debugPrint("   ✅ completed: ${taskEntity.isCompleted}");
-
       // Add task through data source and get the auto-generated ID
       final generatedId = await _repository.addTask(taskEntity);
-      debugPrint("💾 [DB] Task saved with auto-generated ID: $generatedId");
 
       // Create task entity with the correct ID for notifications
       final taskWithCorrectId = taskEntity.copyWith(id: generatedId);
@@ -57,39 +43,16 @@ class AddTaskViewModel extends ChangeNotifier {
           taskWithCorrectId.deadline!.minute,
         );
 
-        //debug
-        final scheduledTime = deadline.subtract(const Duration(minutes: 10));
-        debugPrint("⏳ [NOTIFICATION] Scheduling 10 min before deadline...");
-        debugPrint("   🕒 Deadline: $deadline");
-        debugPrint("   📆 Scheduled Time: $scheduledTime");
-
-        // covert to 32 bit interger suitable for notification ID
-        final notificationId = taskWithCorrectId.id.hashCode & 0x7FFFFFFF;
-        debugPrint("   🆔 Notification ID: $notificationId");
-
         await NotificationService().scheduleDeadlineNotification(
-          id: notificationId,
+          id: taskWithCorrectId.id,
           title: taskWithCorrectId.title,
           description: taskWithCorrectId.description,
           deadline: deadline,
         );
-
-        //debug
-        debugPrint("🔔 [NOTIFICATION] Scheduled successfully!");
-      } else {
-        debugPrint("⚠️ [NOTIFICATION] Skipped (dueDate or deadline is null)");
       }
 
       //refresh local task list
       _tasks = await _repository.getTasks();
-
-      //debug
-      debugPrint("📂 [DB] Current tasks after add:");
-      for (var task in _tasks) {
-        debugPrint(
-          "   📝 ${task.id} | ${task.title} | ${task.dueDate} | ${task.deadline}",
-        );
-      }
 
       for (var task in _tasks) {
         debugPrint("📝 Task: ${task.id} - ${task.title}");
@@ -97,9 +60,6 @@ class AddTaskViewModel extends ChangeNotifier {
 
       _isLoading = false;
       notifyListeners();
-
-      //debug
-      debugPrint("✅ [SUCCESS] Task added successfully\n");
 
       return true;
     } catch (e) {
